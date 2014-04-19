@@ -84,12 +84,20 @@ public class GameController : MonoBehaviour
 
 	/**
 	 * updates the velocity of the ship based on the status of the varying rooms
+	 * @param delta - the amount of time passed since the last update, in milliseconds
 	 */
-	public void UpdateShipVelocity()
+	public void UpdateShipVelocity( float delta )
 	{
-		//determine the potential velocity based on the status of three rooms: Power, Engine, and Control
-		float vPotential = roomHealth[ ShipRoom.CONTROL ] * roomHealth[ ShipRoom.ENGINE ] * roomHealth[ ShipRoom.POWER ];
+		//the potential value determines the possible amount of change in velocity during this update
+		float potential = roomHealth[ ShipRoom.ENGINE ] * roomHealth[ ShipRoom.POWER ];
 
+		//determine the potential velocity based on the status of three rooms: Power, Engine, and Control
+		float vPotential = roomHealth[ ShipRoom.CONTROL ] * potential;
+
+		//the amount of change possible depends on the amount of time passed and the power and engines being provided
+		float dPotential = ( delta * potential ) / 100;
+
+		velocity = ( dPotential * velocity ) + ( vPotential * velocity );
 	}
 
 
