@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameController : MonoBehaviour
 {
@@ -22,7 +23,11 @@ public class GameController : MonoBehaviour
 		private set;
 	}
 
+	//a dictionary storing our room statuses
 	private Dictionary<ShipRoom, float> roomHealth;
+
+	//an array of GameObjects, used as spawn points, that Unity will initialize
+	public GameObject[] spawnPoints;
 
     // Creates an instance of itself
     private void Awake()
@@ -49,7 +54,7 @@ public class GameController : MonoBehaviour
 
 		switch( room )
 		{
-		case COMMUNICATIONS:
+		case ShipRoom.COMMUNICATIONS:
 
 			//the communications room is either disabled or enabled
 			health = Mathf.Round( health );
@@ -66,35 +71,35 @@ public class GameController : MonoBehaviour
 			break;
 			
 			
-		case CONTROL:
+		case ShipRoom.CONTROL:
 
 			//nothing to do here
 			
 			break;
 
 
-		case WEAPON:
+		case ShipRoom.WEAPON:
 			
 			//nothing to do here
 			
 			break;
 			
 			
-		case POWER:
+		case ShipRoom.POWER:
 			
 			//nothing to do here
 			
 			break;
 			
 			
-		case ENGINE:
+		case ShipRoom.ENGINE:
 			
 			//nothing to do here
 			
 			break;
 			
 			
-		case STORAGE:
+		case ShipRoom.STORAGE:
 
 			if( health == 0f ) GameOver = true;
 			
