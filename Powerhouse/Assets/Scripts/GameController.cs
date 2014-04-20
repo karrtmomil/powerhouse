@@ -209,11 +209,11 @@ public class GameController : MonoBehaviour
 	public void SpawnBoat()
 	{
 		//select a random spawn point
-		int size = spawnPoints.Length;
+		int size = boatSpawnPoints.Length;
 		int selected = randy.Next( size );
 
 		//we want to place the new enemy at the same position as the spawning point GameObject
-		Vector3 translation = spawnPoints[ selected ].transform.position;
+		Vector3 translation = boatSpawnPoints[ selected ].transform.position;
 
 		//TODO change the Quaternion below to be initialized dynamically based on spawn location
 		Quaternion rotation = Quaternion.identity;
