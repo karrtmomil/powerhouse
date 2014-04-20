@@ -38,7 +38,7 @@ public class GameController : MonoBehaviour
 	}
 
 	//the spawn rate, in seconds
-	private const float SPAWN_RATE = 15f;
+	private const int SPAWN_RATE = 15;
 
 	//the current forward velocity of the ship
 	private float velocity;
@@ -89,6 +89,7 @@ public class GameController : MonoBehaviour
 
 		randy = new System.Random();
 		velocity = 0f;
+		lastEnemySpawned = -1f;
 		UpdateRoomHealth( ShipRoom.ENGINE, .5f );
 	}
 
@@ -99,7 +100,7 @@ public class GameController : MonoBehaviour
 		UpdateShipVelocity( Time.deltaTime );
 		float currentTime = Time.time;
 
-		if( currentTime % SPAWN_RATE == 0f && lastEnemySpawned < currentTime )
+		if( ( (int)Time.time ) % SPAWN_RATE == 0 && lastEnemySpawned < Math.Floor( currentTime ) )
 		{
 			lastEnemySpawned = currentTime;
 			SpawnBoat();
@@ -216,9 +217,10 @@ public class GameController : MonoBehaviour
 		Vector3 translation = boatSpawnPoints[ selected ].transform.position;
 
 		//TODO change the Quaternion below to be initialized dynamically based on spawn location
-		Quaternion rotation = Quaternion.identity;
+		Quaternion rotation = boatSpawnPoints[ selected ].transform.rotation;
 
 		//create the new enemy GameObject and add one to the total enemies
 		GameObject.Instantiate( boatGameObject, translation, rotation );
+		print( "i'm on a boat!" );
 	}
 }
