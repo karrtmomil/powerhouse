@@ -75,9 +75,24 @@ public class GameController : MonoBehaviour
 	private void Start()
 	{
 		GameOver = false;
+
 		roomHealth = new Dictionary<ShipRoom, float>();
+		foreach( ShipRoom room in (ShipRoom[]) Enum.GetValues( typeof( ShipRoom ) ) )
+		{
+			roomHealth.Add( room, 1f );
+		}
+
 		randy = new System.Random();
 		velocity = 0f;
+		UpdateRoomHealth( ShipRoom.ENGINE, .5f );
+	}
+
+
+
+	public void Update()
+	{
+		UpdateShipVelocity( Time.deltaTime );
+		print ( velocity );
 	}
 
 
@@ -88,16 +103,25 @@ public class GameController : MonoBehaviour
 	 */
 	public void UpdateShipVelocity( float delta )
 	{
-		//the potential value determines the possible amount of change in velocity during this update
-		float potential = roomHealth[ ShipRoom.ENGINE ] * roomHealth[ ShipRoom.POWER ];
-
 		//determine the potential velocity based on the status of three rooms: Power, Engine, and Control
-		float vPotential = roomHealth[ ShipRoom.CONTROL ] * potential;
+		float vPotential = roomHealth[ ShipRoom.CONTROL ] * roomHealth[ ShipRoom.ENGINE ] * roomHealth[ ShipRoom.POWER ];
 
 		//the amount of change possible depends on the amount of time passed and the power and engines being provided
-		float dPotential = ( delta * potential ) / 100;
+		float dPotential = delta / 200;
 
-		velocity = ( dPotential * velocity ) + ( vPotential * velocity );
+		//the actual amount of change possible
+		float potential = dPotential * vPotential;
+
+		if( potential == 0f )
+		{
+			potential = velocity - dPotential;
+		}
+		else
+		{
+			potential = ( velocity < vPotential ? velocity + potential : velocity - potential );
+		}
+
+		velocity = Mathf.Max( Mathf.Min ( potential, 1f ), 0f );
 	}
 
 
@@ -164,7 +188,7 @@ public class GameController : MonoBehaviour
 		}
 
 		//store the new health of the given room into the dictionary
-		roomHealth.Add( room, health );
+		roomHealth[ room ] = health;
 	}
 
 
