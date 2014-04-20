@@ -14,6 +14,9 @@ var useFixedUpdate : boolean = true;
 @System.NonSerialized
 var inputMoveDirection : Vector3 = Vector3.zero;
 
+@System.NonSerialized
+var onLadder : boolean = false;
+
 // Is the jump button held down? We use this interface instead of checking
 // for the jump button directly so this script can also be used by AIs.
 @System.NonSerialized
@@ -581,6 +584,7 @@ function SetVelocity (velocity : Vector3) {
 	movement.frameVelocity = Vector3.zero;
 	SendMessage("OnExternalVelocity");
 }
+
 
 // Require a character controller to be attached to the same game object
 @script RequireComponent (CharacterController)
