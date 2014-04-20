@@ -23,13 +23,6 @@ public class GameController : MonoBehaviour
 		get;
 		private set;
 	}
-	
-	//the total number of enemies currently in the scene
-	public int TotalNumberOfEnemies
-	{
-		get;
-		private set;
-	}
 
 	//a property which controls access to the current forward velocity of the ship
 	public float Velocity
@@ -44,20 +37,32 @@ public class GameController : MonoBehaviour
 		}
 	}
 
+	//the spawn rate, in seconds
+	private const float SPAWN_RATE = 15f;
+
 	//the current forward velocity of the ship
 	private float velocity;
+	
+	//the time of the last spawned enemy
+	private float lastEnemySpawned;
 
 	//a random number generator, nothing to see here
 	private System.Random randy;
 
 	//a dictionary storing our room statuses
 	private Dictionary<ShipRoom, float> roomHealth;
-
+	
 	//the GameObject which represents the enemies in the game, Unity will initialize
 	public GameObject enemyGameObject;
 
+	//the GameObject which represents the enemies in the game, Unity will initialize
+	public GameObject boatGameObject;
+
 	//an array of GameObjects, used as spawn points, that Unity will initialize
-	public GameObject[] spawnPoints;
+	public GameObject[] roomSpawnPoints;
+	
+	//an array of GameObjects, used as spawn points, that Unity will initialize
+	public GameObject[] boatSpawnPoints;
 
 
 
@@ -92,7 +97,13 @@ public class GameController : MonoBehaviour
 	public void Update()
 	{
 		UpdateShipVelocity( Time.deltaTime );
-		print ( velocity );
+		float currentTime = Time.time;
+
+		if( currentTime % SPAWN_RATE == 0f && lastEnemySpawned < currentTime )
+		{
+			lastEnemySpawned = currentTime;
+			SpawnBoat();
+		}
 	}
 
 
@@ -195,7 +206,7 @@ public class GameController : MonoBehaviour
 	/**
 	 * spawns an enemy at a random spawning point
 	 */
-	public void SpawnEnemy()
+	public void SpawnBoat()
 	{
 		//select a random spawn point
 		int size = spawnPoints.Length;
@@ -208,7 +219,6 @@ public class GameController : MonoBehaviour
 		Quaternion rotation = Quaternion.identity;
 
 		//create the new enemy GameObject and add one to the total enemies
-		GameObject.Instantiate( enemyGameObject, translation, rotation );
-		TotalNumberOfEnemies++;
+		GameObject.Instantiate( boatGameObject, translation, rotation );
 	}
 }
