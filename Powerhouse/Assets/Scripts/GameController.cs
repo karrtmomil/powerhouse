@@ -17,6 +17,11 @@ public class GameController : MonoBehaviour
 		STORAGE
 	};
 
+    public Camera CameraMain;
+    public Camera CameraTurret1;
+    public Camera CameraTurret2;
+    public Camera CameraTurret3;
+
 	//a boolean value which determines if the game is over
 	public bool GameOver
 	{
