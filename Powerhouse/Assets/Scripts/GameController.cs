@@ -42,14 +42,23 @@ public class GameController : MonoBehaviour
 		}
 	}
 
-	//the spawn rate, in seconds
-	private const int SPAWN_RATE = 15;
+    //the time, in milliseconds, which will correspond to one unit of movement
+    private const int UNIT_OF_MOVEMENT_TIMEFRAME = 200;
 
-	//the current forward velocity of the ship
-	private float velocity;
+    //the time, in seconds, between boat spawns when enemies are not present on the ship
+    private const int SPAWN_RATE_WHEN_UNOCCUPIED = 5;
+
+    //the time, in seconds, between boat spawns when enemies are present on the ship
+    private const int SPAWN_RATE_WHEN_OCCUPIED = 8;
+
+    //the current forward velocity of the ship
+    private float velocity;
 	
 	//the time of the last spawned enemy
 	private float lastEnemySpawned;
+
+    //the number of enemies currently on the ship
+    private int numberOfEnemiesOnShip;
 
 	//a random number generator, nothing to see here
 	private System.Random randy;
@@ -95,6 +104,7 @@ public class GameController : MonoBehaviour
 		randy = new System.Random();
 		velocity = 0f;
 		lastEnemySpawned = -1f;
+        numberOfEnemiesOnShip = 0;
 		UpdateRoomHealth( ShipRoom.ENGINE, .5f );
 	}
 
@@ -105,7 +115,9 @@ public class GameController : MonoBehaviour
 		UpdateShipVelocity( Time.deltaTime );
 		float currentTime = Time.time;
 
-		if( ( (int)Time.time ) % SPAWN_RATE == 0 && lastEnemySpawned < Math.Floor( currentTime ) )
+        int spawnRate = numberOfEnemiesOnShip > 0 ? SPAWN_RATE_WHEN_OCCUPIED : SPAWN_RATE_WHEN_UNOCCUPIED;
+
+        if ( ( (int) Time.time ) % spawnRate == 0 && lastEnemySpawned < Math.Floor( currentTime ) )
 		{
 			lastEnemySpawned = currentTime;
 			SpawnBoat();
@@ -123,8 +135,8 @@ public class GameController : MonoBehaviour
 		//determine the potential velocity based on the status of three rooms: Power, Engine, and Control
 		float vPotential = roomHealth[ ShipRoom.CONTROL ] * roomHealth[ ShipRoom.ENGINE ] * roomHealth[ ShipRoom.POWER ];
 
-		//the amount of change possible depends on the amount of time passed and the power and engines being provided
-		float dPotential = delta / 200;
+		//the amount of change possible depends on the amount of time passed
+		float dPotential = delta / UNIT_OF_MOVEMENT_TIMEFRAME;
 
 		//the actual amount of change possible
 		float potential = dPotential * vPotential;
@@ -140,6 +152,7 @@ public class GameController : MonoBehaviour
 
 		velocity = Mathf.Max( Mathf.Min ( potential, 1f ), 0f );
 	}
+
 
 
 	/**
@@ -210,22 +223,54 @@ public class GameController : MonoBehaviour
 
 
 	/**
-	 * spawns an enemy at a random spawning point
+	 * spawns an enemy boat at a random water-based spawning point
 	 */
 	public void SpawnBoat()
 	{
-		//select a random spawn point
-		int size = boatSpawnPoints.Length;
-		int selected = randy.Next( size );
-
-		//we want to place the new enemy at the same position as the spawning point GameObject
-		Vector3 translation = boatSpawnPoints[ selected ].transform.position;
-
-		//TODO change the Quaternion below to be initialized dynamically based on spawn location
-		Quaternion rotation = boatSpawnPoints[ selected ].transform.rotation;
-
-		//create the new enemy GameObject and add one to the total enemies
-		GameObject.Instantiate( boatGameObject, translation, rotation );
+        InstantiateAtRandomSpawnPoint( boatGameObject, boatSpawnPoints );
 		print( "i'm on a boat!" );
 	}
+
+
+
+    /**
+     * spawns a single enemy into a random room
+     */
+    public void SpawnEnemy()
+    {
+        InstantiateAtRandomSpawnPoint( enemyGameObject, roomSpawnPoints );
+        ++numberOfEnemiesOnShip;
+    }
+
+
+    /**
+     * invoked when an enemy on the boat is killed
+     */
+    public void onEnemyKilled( GameObject gameObject )
+    {
+        GameObject.Destroy( gameObject );
+        --numberOfEnemiesOnShip;
+    }
+
+
+    /**
+     * duplicate code is a bad thing.
+     */
+    private void InstantiateAtRandomSpawnPoint( GameObject gameObject, GameObject[] spawnPoints )
+    {
+        if ( gameObject == null || spawnPoints == null ) return;
+
+        //select a random room
+        int size = spawnPoints.Length;
+        int selected = randy.Next( size );
+
+        //set the position equal to the spawn point
+        Vector3 translation = spawnPoints[selected].transform.position;
+
+        //set the rotation equal to the spawning point's rotation
+        Quaternion rotation = spawnPoints[selected].transform.rotation;
+
+        //create the new enemy GameObject
+        GameObject.Instantiate( gameObject, translation, rotation );
+    }
 }

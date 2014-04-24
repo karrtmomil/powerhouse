@@ -20,6 +20,5 @@ public class Boat : MonoBehaviour {
 	private void OnCollisionEnter( Collision o )
 	{
 		GameObject.Destroy( this.gameObject );
-		print ( "the boat engine make noise mfer!" );
 	}
 }

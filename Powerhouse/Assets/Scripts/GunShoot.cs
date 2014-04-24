@@ -26,7 +26,8 @@ public class GunShoot : MonoBehaviour
             if (hit.collider.gameObject.name == "Enemy" && !time)
             {
                 audio.Play();
-                GameObject.Destroy(hit.collider.gameObject);
+                //GameObject.Destroy(hit.collider.gameObject);
+                GameController.Instance.onEnemyKilled( hit.collider.gameObject  );
                 var obj = GameObject.Instantiate(explosion, spawn.transform.position, Quaternion.identity);
                 ((GameObject)obj).transform.parent = this.transform;
                 time = true;
