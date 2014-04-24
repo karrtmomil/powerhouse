@@ -23,7 +23,6 @@ public class GunShoot : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
-            Debug.Log("HIT: " + hit.collider.gameObject.name);
             if (hit.collider.gameObject.name.Contains("Enemy") && !time)
             {
                 //inform the gamecontroller that we have killed an enemy on the boat

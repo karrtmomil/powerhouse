@@ -225,7 +225,6 @@ public class GameController : MonoBehaviour
 	public void SpawnBoat()
 	{
         InstantiateAtRandomSpawnPoint( boatGameObject, boatSpawnPoints );
-		print( "i'm on a boat!" );
 	}
 
 
@@ -246,7 +245,6 @@ public class GameController : MonoBehaviour
     public void onBoatCollision( GameObject gameObject )
     {
         int numberOfEnemies = gameObject.transform.childCount - 1;
-        print( "" + numberOfEnemies + " enemies detected on boat" );
 
         GameObject.Destroy( gameObject );
 
@@ -259,7 +257,6 @@ public class GameController : MonoBehaviour
             if ( r >= 0.75 )
             {
                 SpawnEnemy();
-                print( "enemy spawned" );
                 break;
             }
         }

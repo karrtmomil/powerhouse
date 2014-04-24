@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Boat : MonoBehaviour {
 
-	private const float CD = 0.5f;
+	private const float CD = 2.75f;
 	private float timer;
 	private bool time;
 	private GameObject explosion;
@@ -30,6 +30,7 @@ public class Boat : MonoBehaviour {
 		{
 			Vector3 up = new Vector3(0f,1f,0f);
 			var obj = GameObject.Instantiate(explosion, this.transform.position + up, Quaternion.identity);
+            ((GameObject) obj).transform.Rotate(new Vector3(-90, 0, 0));
 			time = true;
 			timer = 0;
 		}
