@@ -76,6 +76,9 @@ public class GameController : MonoBehaviour
     // Lets us know if user is in the turrent to switch some UI information
     public bool inTurret;
 
+    // Objects of current active enemies
+    public List<GameObject> activeEnemies;
+
     // Creates an instance of itself
     private void Awake()
     {
@@ -103,6 +106,7 @@ public class GameController : MonoBehaviour
 		lastEnemySpawned = -1f;
         numberOfEnemiesOnShip = 0;
 		UpdateRoomHealth( ShipRoom.ENGINE, .5f );
+        activeEnemies = new List<GameObject>();
 	}
 
 
@@ -268,10 +272,10 @@ public class GameController : MonoBehaviour
      */
     public void onEnemyKilled( GameObject gameObject )
     {
+        activeEnemies.Remove(gameObject);
         GameObject.Destroy( gameObject );
         --numberOfEnemiesOnShip;
     }
-
 
     /**
      * duplicate code is a bad thing.
@@ -291,6 +295,8 @@ public class GameController : MonoBehaviour
         Quaternion rotation = spawnPoints[selected].transform.rotation;
 
         //create the new enemy GameObject
-        GameObject.Instantiate( gameObject, translation, rotation );
+        GameObject obj = (GameObject)GameObject.Instantiate(gameObject, translation, rotation);
+        if(gameObject.name == "Enemy")
+            activeEnemies.Add(obj);
     }
 }
