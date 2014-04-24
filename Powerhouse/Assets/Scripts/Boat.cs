@@ -14,6 +14,11 @@ public class Boat : MonoBehaviour {
 		float dtime = Time.deltaTime;
 		Vector3 forward = this.transform.forward;
 		transform.position += forward * 6 * dtime;
+
+		if (this.transform.childCount < 2) 
+		{
+			GameObject.Destroy( this.gameObject );
+		}
 	}
 
 
