@@ -17,11 +17,6 @@ public class GameController : MonoBehaviour
 		STORAGE
 	};
 
-    public Camera CameraMain;
-    public Camera CameraTurret1;
-    public Camera CameraTurret2;
-    public Camera CameraTurret3;
-
 	//a boolean value which determines if the game is over
 	public bool GameOver
 	{
@@ -78,7 +73,8 @@ public class GameController : MonoBehaviour
 	//an array of GameObjects, used as spawn points, that Unity will initialize
 	public GameObject[] boatSpawnPoints;
 
-
+    // Lets us know if user is in the turrent to switch some UI information
+    public bool inTurret;
 
     // Creates an instance of itself
     private void Awake()
@@ -94,6 +90,7 @@ public class GameController : MonoBehaviour
 	private void Start()
 	{
 		GameOver = false;
+        inTurret = false;
 
 		roomHealth = new Dictionary<ShipRoom, float>();
 		foreach( ShipRoom room in (ShipRoom[]) Enum.GetValues( typeof( ShipRoom ) ) )
