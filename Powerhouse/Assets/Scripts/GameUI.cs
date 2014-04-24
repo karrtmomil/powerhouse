@@ -13,8 +13,8 @@ public class GameUI : MonoBehaviour
         _crosshair = Resources.Load(@"Textures/crosshair") as Texture;
         _crosshairLoc = new Rect(Screen.width / 2 - 50, Screen.height / 2 - 50, 100, 100);
         Screen.showCursor = false;
-        _move = new ScreenPad(new Rect(20, Screen.height - 370, 350, 350));
-        _look = new ScreenPad(new Rect(Screen.width - 370, Screen.height - 370, 350, 350));
+        _move = new ScreenPad(new Rect(20, Screen.height - (Screen.width * 0.15f + 20), Screen.width * 0.15f, Screen.width * 0.15f));
+        _look = new ScreenPad(new Rect(Screen.width - (Screen.width * 0.15f + 20), Screen.height - (Screen.width * 0.15f + 20), Screen.width * 0.15f, Screen.width * 0.15f));
 	}
 
     private void Update()

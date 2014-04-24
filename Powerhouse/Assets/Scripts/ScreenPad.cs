@@ -17,7 +17,7 @@ public enum StickDirection
 public class ScreenPad
 {
     private Texture screenJoyStick;
-    private Texture screenTouchPad;
+    private Texture2D screenTouchPad;
     private Rect joyStickRect;
     private Rect touchPadRect;
 
@@ -41,8 +41,12 @@ public class ScreenPad
 
     public ScreenPad(Rect locationAndSize)
     {
+
+
         screenJoyStick = Resources.Load<Texture>(@"Textures/screenJoyStick");
-        screenTouchPad = Resources.Load<Texture>(@"Textures/screenTouchPad");
+        screenTouchPad = new Texture2D(1, 1);
+        screenTouchPad.SetPixel(1, 1, Color.clear);
+        screenTouchPad.Apply();
         initialPosition = new Rect(locationAndSize.x + locationAndSize.width / 4, 
             locationAndSize.y + locationAndSize.height / 4, locationAndSize.width / 2, locationAndSize.height / 2);
         joyStickRect = initialPosition;
