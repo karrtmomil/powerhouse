@@ -3,7 +3,7 @@ using System.Collections;
 
 public class ExplosionDelay : MonoBehaviour 
 {
-    const float DURATION = 0.2f;
+    public float DURATION = 0.2f;
     float timer;
 
 	void Start () 
