@@ -24,6 +24,12 @@ public class EnterTurret : MonoBehaviour
                 currentCamera.SetActive(false);
                 GameController.Instance.inTurret = true;
             }
+            if (GameController.Instance.inTurret && Input.GetMouseButtonDown(1))
+            {
+                currentCamera.SetActive(true);
+                child.SetActive(false);
+                GameController.Instance.inTurret = false;
+            }
         }
     }
 
@@ -36,6 +42,14 @@ public class EnterTurret : MonoBehaviour
             Vector2 textSize = GUI.skin.GetStyle("Label").CalcSize(new GUIContent("Left Click To Enter"));
             Rect textLocation = new Rect(Screen.width / 2 - textSize.x / 2, Screen.height / 2 - 120, textSize.x, textSize.y);
             GUI.Label(textLocation, "Left Click To Enter");
+        }
+        if (GameController.Instance.inTurret)
+        {
+            GUI.skin = skin;
+            GUI.color = Color.red;
+            Vector2 textSize = GUI.skin.GetStyle("Label").CalcSize(new GUIContent("Right Click To Exit"));
+            Rect textLocation = new Rect(Screen.width / 2 - textSize.x / 2, Screen.height / 2 - 120, textSize.x, textSize.y);
+            GUI.Label(textLocation, "Right Click To Exit");
         }
     }
 }
