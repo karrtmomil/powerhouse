@@ -244,7 +244,32 @@ public class GameController : MonoBehaviour
 
 
     /**
-     * invoked when an enemy on the boat is killed
+     * invoked when a rowboat hits the ship
+     */
+    public void onBoatCollision( GameObject gameObject )
+    {
+        int numberOfEnemies = gameObject.transform.childCount;
+        print( "" + numberOfEnemies + " enemies detected on boat" );
+
+        GameObject.Destroy( gameObject );
+
+        //each enemy on the boat gives a chance of spawning an enemy onto the boat
+        for ( int i = 0; i < numberOfEnemies; ++i )
+        {
+            double r = randy.NextDouble();
+            
+            //25% chance to spawn an enemy on the boat
+            if ( r >= 0.75 )
+            {
+                SpawnEnemy();
+                print( "enemy spawned" );
+            }
+        }
+    }
+
+
+    /**
+     * invoked when an enemy on the ship is killed
      */
     public void onEnemyKilled( GameObject gameObject )
     {

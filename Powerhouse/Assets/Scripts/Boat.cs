@@ -13,12 +13,12 @@ public class Boat : MonoBehaviour {
 	{
 		float dtime = Time.deltaTime;
 		Vector3 forward = this.transform.forward;
-		transform.position += forward * 2 * dtime;
+		transform.position += forward * 4 * dtime;
 	}
 
 
 	private void OnCollisionEnter( Collision o )
 	{
-		GameObject.Destroy( this.gameObject );
+        GameController.Instance.onBoatCollision( this.gameObject );
 	}
 }

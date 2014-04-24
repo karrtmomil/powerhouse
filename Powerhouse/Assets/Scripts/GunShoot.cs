@@ -25,9 +25,10 @@ public class GunShoot : MonoBehaviour
         {
             if (hit.collider.gameObject.name == "Enemy" && !time)
             {
+                //inform the gamecontroller that we have killed an enemy on the boat
+                GameController.Instance.onEnemyKilled( hit.collider.gameObject );
+
                 audio.Play();
-                //GameObject.Destroy(hit.collider.gameObject);
-                GameController.Instance.onEnemyKilled( hit.collider.gameObject  );
                 var obj = GameObject.Instantiate(explosion, spawn.transform.position, Quaternion.identity);
                 ((GameObject)obj).transform.parent = this.transform;
                 time = true;
