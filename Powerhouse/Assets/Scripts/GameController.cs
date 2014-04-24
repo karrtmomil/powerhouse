@@ -46,10 +46,10 @@ public class GameController : MonoBehaviour
     private const int UNIT_OF_MOVEMENT_TIMEFRAME = 200;
 
     //the time, in seconds, between boat spawns when enemies are not present on the ship
-    private const int SPAWN_RATE_WHEN_UNOCCUPIED = 5;
+    private const int SPAWN_RATE_WHEN_UNOCCUPIED = 7;
 
     //the time, in seconds, between boat spawns when enemies are present on the ship
-    private const int SPAWN_RATE_WHEN_OCCUPIED = 8;
+    private const int SPAWN_RATE_WHEN_OCCUPIED = 12;
 
     //the current forward velocity of the ship
     private float velocity;
@@ -248,7 +248,7 @@ public class GameController : MonoBehaviour
      */
     public void onBoatCollision( GameObject gameObject )
     {
-        int numberOfEnemies = gameObject.transform.childCount;
+        int numberOfEnemies = gameObject.transform.childCount - 1;
         print( "" + numberOfEnemies + " enemies detected on boat" );
 
         GameObject.Destroy( gameObject );
@@ -263,6 +263,7 @@ public class GameController : MonoBehaviour
             {
                 SpawnEnemy();
                 print( "enemy spawned" );
+                break;
             }
         }
     }

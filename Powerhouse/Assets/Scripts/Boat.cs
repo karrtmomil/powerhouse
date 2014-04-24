@@ -13,7 +13,7 @@ public class Boat : MonoBehaviour {
 	{
 		float dtime = Time.deltaTime;
 		Vector3 forward = this.transform.forward;
-		transform.position += forward * 4 * dtime;
+		transform.position += forward * 6 * dtime;
 	}
 
 
