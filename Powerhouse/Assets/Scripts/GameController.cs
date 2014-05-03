@@ -57,6 +57,9 @@ public class GameController : MonoBehaviour
     //the time, in milliseconds, between potential 1% progress gains
     private const int UNIT_OF_PROGRESS_UPDATE_TIMEFRAME = 2;
 
+    //the time, in milliseconds, between potential 1% heading changes
+    private const int UNIT_OF_HEADING_CHANGE = 1;
+
     //the time, in seconds, between boat spawns when enemies are not present on the ship
     private const int SPAWN_RATE_WHEN_UNOCCUPIED = 7;
 
@@ -169,32 +172,53 @@ public class GameController : MonoBehaviour
 
 
 
-	/**
-	 * updates the velocity of the ship based on the status of the varying rooms
-	 * @param delta - the amount of time passed since the last update, in milliseconds
-	 */
-	public void UpdateShipVelocity( float delta )
-	{
-		//determine the potential velocity based on the status of three rooms: Power, Engine, and Control
-		float vPotential = roomHealth[ ShipRoom.CONTROL ] * roomHealth[ ShipRoom.ENGINE ] * roomHealth[ ShipRoom.POWER ];
+    /**
+     * updates the velocity of the ship based on the status of the varying rooms
+     * @param delta - the amount of time passed since the last update, in milliseconds
+     */
+    public void UpdateShipVelocity(float delta)
+    {
+        //determine the potential velocity based on the status of three rooms: Power, Engine, and Control
+        //float vPotential = roomHealth[ ShipRoom.CONTROL ] * roomHealth[ ShipRoom.ENGINE ] * roomHealth[ ShipRoom.POWER ];
+        float vPotential = (roomStatus[ShipRoom.ENGINE] || roomStatus[ShipRoom.POWER]) ? -1f : 1f;
 
-		//the amount of change possible depends on the amount of time passed
-		float dPotential = delta / UNIT_OF_MOVEMENT_TIMEFRAME;
+        //the amount of change possible depends on the amount of time passed
+        float dPotential = delta / UNIT_OF_MOVEMENT_TIMEFRAME;
 
-		//the actual amount of change possible
-		float potential = dPotential * vPotential;
+        //the actual amount of change possible
+        float potential = dPotential * vPotential;
 
-		if( potential == 0f )
-		{
-			potential = velocity - dPotential;
-		}
-		else
-		{
-			potential = ( velocity < vPotential ? velocity + potential : velocity - potential );
-		}
+        //if( potential == 0f )
+        //{
+        //    potential = velocity - dPotential;
+        //}
+        //else
+        //{
+        //    potential = ( velocity < vPotential ? velocity + potential : velocity - potential );
+        //}
 
-		velocity = Mathf.Max( Mathf.Min ( potential, 1f ), 0f );
-	}
+        velocity = Mathf.Max(Mathf.Min(velocity + potential, 1f), 0f);
+    }
+
+
+
+    /**
+     * updates the velocity of the ship based on the status of the varying rooms
+     * @param delta - the amount of time passed since the last update, in milliseconds
+     */
+    public void UpdateShipHeading(float delta)
+    {
+        //determine the potential velocity based on the status of three rooms: Power, Engine, and Control
+        float hPotential = (roomStatus[ShipRoom.ENGINE] || roomStatus[ShipRoom.POWER]) ? -1f : 1f;
+
+        //the amount of change possible depends on the amount of time passed
+        float dHeading = delta / UNIT_OF_HEADING_CHANGE;
+
+        //the actual amount of change possible
+        float potential = hPotential * dHeading;
+
+        heading = Mathf.Max(Mathf.Min(heading + potential, 1f), 0f);
+    }
 
 
 
