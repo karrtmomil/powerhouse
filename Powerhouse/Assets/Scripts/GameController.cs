@@ -52,6 +52,20 @@ public class GameController : MonoBehaviour
         private set;
     }
 
+    //the current score multiplier
+    public int Multiplier
+    {
+        get;
+        private set;
+    }
+
+    //the current score
+    public int Score
+    {
+        get;
+        private set;
+    }
+
     //the time, in milliseconds, which will correspond to one unit of movement
     private const int UNIT_OF_MOVEMENT_TIMEFRAME = 200;
 
@@ -66,12 +80,12 @@ public class GameController : MonoBehaviour
 
     //the time, in seconds, between boat spawns when enemies are present on the ship
     private const int SPAWN_RATE_WHEN_OCCUPIED = 12;
+
+    //the base number of points gained when an enemy is killed
+    private const int POINTS_PER_ENEMY_KILLED = 100;
 	
 	//the time of the last spawned enemy
 	private float lastEnemySpawned;
-
-    //the number of enemies currently on the ship
-    private int numberOfEnemiesOnShip;
 
 	//a random number generator, nothing to see here
 	private System.Random randy;
@@ -130,6 +144,10 @@ public class GameController : MonoBehaviour
         ShipHealth = 1f;
         Progress = 0f;
 
+        //the Score starts at 0, with the multiplier starting at 1
+        Score = 0;
+        Multiplier = 1;
+
         //initialize the status of each room
         roomStatus = new Dictionary<ShipRoom, bool>();
         foreach (ShipRoom room in (ShipRoom[])Enum.GetValues(typeof(ShipRoom)))
@@ -140,7 +158,6 @@ public class GameController : MonoBehaviour
 
 		randy = new System.Random();
 		lastEnemySpawned = -1f;
-        numberOfEnemiesOnShip = 0;
 		UpdateRoomHealth( ShipRoom.ENGINE, .5f );
         activeEnemies = new List<GameObject>();
 	}
@@ -159,7 +176,7 @@ public class GameController : MonoBehaviour
         UpdateGameProgress( dT );
 
         //determine if it's time to spawn an enemy
-        int spawnRate = numberOfEnemiesOnShip > 0 ? SPAWN_RATE_WHEN_OCCUPIED : SPAWN_RATE_WHEN_UNOCCUPIED;
+        int spawnRate = activeEnemies.Count > 0 ? SPAWN_RATE_WHEN_OCCUPIED : SPAWN_RATE_WHEN_UNOCCUPIED;
         if (((int)Time.time) % spawnRate == 0 && lastEnemySpawned < Math.Floor(time))
 		{
             lastEnemySpawned = time;
@@ -184,15 +201,6 @@ public class GameController : MonoBehaviour
 
         //the actual amount of change possible
         float potential = dPotential * vPotential;
-
-        //if( potential == 0f )
-        //{
-        //    potential = velocity - dPotential;
-        //}
-        //else
-        //{
-        //    potential = ( velocity < vPotential ? velocity + potential : velocity - potential );
-        //}
 
         Velocity = Mathf.Max(Mathf.Min(Velocity + potential, 1f), 0f);
     }
@@ -322,8 +330,7 @@ public class GameController : MonoBehaviour
      */
     public void SpawnEnemy()
     {
-        InstantiateAtRandomSpawnPoint( enemyGameObject, roomSpawnPoints );
-        ++numberOfEnemiesOnShip;
+        activeEnemies.Add( InstantiateAtRandomSpawnPoint( enemyGameObject, roomSpawnPoints ) );
     }
 
 
@@ -333,6 +340,7 @@ public class GameController : MonoBehaviour
     public void onBoatCollision( GameObject gameObject )
     {
         int numberOfEnemies = gameObject.transform.childCount - 1;
+        Multiplier = 1;
 
         GameObject.Destroy( gameObject );
 
@@ -354,19 +362,21 @@ public class GameController : MonoBehaviour
     /**
      * invoked when an enemy on the ship is killed
      */
-    public void onEnemyKilled( GameObject gameObject )
+    public void onEnemyKilled(GameObject gameObject)
     {
         activeEnemies.Remove(gameObject);
-        GameObject.Destroy( gameObject );
-        --numberOfEnemiesOnShip;
+        GameObject.Destroy(gameObject);
+        Multiplier += 1;
+        Score += ( Multiplier * POINTS_PER_ENEMY_KILLED );
     }
+
 
     /**
      * duplicate code is a bad thing.
      */
-    private void InstantiateAtRandomSpawnPoint( GameObject gameObject, GameObject[] spawnPoints )
+    private GameObject InstantiateAtRandomSpawnPoint( GameObject gameObject, GameObject[] spawnPoints )
     {
-        if ( gameObject == null || spawnPoints == null ) return;
+        if ( gameObject == null || spawnPoints == null ) return null;
 
         //select a random room
         int size = spawnPoints.Length;
@@ -382,5 +392,7 @@ public class GameController : MonoBehaviour
         GameObject obj = (GameObject)GameObject.Instantiate(gameObject, translation, rotation);
         if(gameObject.name == "Enemy")
             activeEnemies.Add(obj);
+
+        return obj;
     }
 }
