@@ -24,19 +24,6 @@ public class GameController : MonoBehaviour
 		private set;
 	}
 
-	//a property which controls access to the current forward velocity of the ship
-	public float Velocity
-	{
-		get
-		{
-			return velocity;
-		}
-		set
-		{
-			velocity = Mathf.Max( Mathf.Min( 1f, value ), 0f );
-		}
-    }
-
     //Represents the progress to the destination
     public float Progress
     {
@@ -46,6 +33,20 @@ public class GameController : MonoBehaviour
 
     //Represents the health of the ship
     public float ShipHealth
+    {
+        get;
+        private set;
+    }
+
+    //represents the forward velocity of the ship towards the goal
+    public float Velocity
+    {
+        get;
+        private set;
+    }
+
+    //the current heading of the ship towards the goal, represented as a float. 0 = backwards, 1 = directly towards the goal ( 0, 1 ) = percentage of heading
+    public float Heading
     {
         get;
         private set;
@@ -65,12 +66,6 @@ public class GameController : MonoBehaviour
 
     //the time, in seconds, between boat spawns when enemies are present on the ship
     private const int SPAWN_RATE_WHEN_OCCUPIED = 12;
-
-    //the current forward velocity of the ship
-    private float velocity;
-
-    //the current heading of the ship, represented as a float. 0 = backwards, 1 = directly towards the goal ( 0, 1 ) = percentage of heading
-    private float heading;
 	
 	//the time of the last spawned enemy
 	private float lastEnemySpawned;
@@ -128,8 +123,8 @@ public class GameController : MonoBehaviour
 		}
 
         //we start with 0 velocity but are pointed directly towards the goal
-        velocity = 0f;
-        heading = 1f;
+        Velocity = 0f;
+        Heading = 1f;
 
         //we have 100% of ships health, but 0% progress
         ShipHealth = 1f;
@@ -151,7 +146,9 @@ public class GameController : MonoBehaviour
 	}
 
 
-
+    /**
+     * the update function called by Unity at every frame
+     */
 	public void Update()
 	{
         float dT = Time.deltaTime;
@@ -197,7 +194,7 @@ public class GameController : MonoBehaviour
         //    potential = ( velocity < vPotential ? velocity + potential : velocity - potential );
         //}
 
-        velocity = Mathf.Max(Mathf.Min(velocity + potential, 1f), 0f);
+        Velocity = Mathf.Max(Mathf.Min(Velocity + potential, 1f), 0f);
     }
 
 
@@ -217,7 +214,7 @@ public class GameController : MonoBehaviour
         //the actual amount of change possible
         float potential = hPotential * dHeading;
 
-        heading = Mathf.Max(Mathf.Min(heading + potential, 1f), 0f);
+        Heading = Mathf.Max(Mathf.Min(Heading + potential, 1f), 0f);
     }
 
 
@@ -228,7 +225,7 @@ public class GameController : MonoBehaviour
     public void UpdateGameProgress(float delta)
     {
         float dPotential = delta / UNIT_OF_PROGRESS_UPDATE_TIMEFRAME;
-        float potential = heading * velocity * dPotential;
+        float potential = Heading * Velocity * dPotential;
         Progress += ( potential * 0.01f );
     }
 
