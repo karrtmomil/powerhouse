@@ -3,6 +3,9 @@ using System.Collections;
 
 public class ProgressInfo : MonoBehaviour 
 {
+    // Skin for score and multiplier
+    public GUISkin Skin;
+
     // Border width of progress and hp bars
     private const int LINE_WIDTH = 3;
 
@@ -12,13 +15,23 @@ public class ProgressInfo : MonoBehaviour
     private Texture2D _healthFore;
     private Texture2D _healthBack;
     private Texture2D _line;
+    private Texture2D _dialBack;
 
     // Locations of progress and health bars
     private Rect _progressRect;
     private Rect _healthRect;
 
+    // Locations of heading and velocity dials
+    private Rect _headingRect;
+    private Rect _velocityRect;
+
+    private float unitHeight;
+
     void Start()
     {
+        // Load dial image
+        _dialBack = Resources.Load<Texture2D>("Textures/dial");
+
         // Initializes textures used
         _progressFore = new Texture2D(1, 1);
         _progressBack = new Texture2D(1, 1);
@@ -40,10 +53,15 @@ public class ProgressInfo : MonoBehaviour
         _healthBack.Apply();
         _line.Apply();
 
+        unitHeight = Screen.height / 25 * 0.5f;
         // Location of progress bar on screen
-        _progressRect = new Rect(Screen.width * 0.25f, Screen.height / 25, Screen.width / 2, Screen.height / 25);
+        _progressRect = new Rect(Screen.width * 0.25f, unitHeight, Screen.width / 2, Screen.height / 25);
         // Location of health bar on screen
-        _healthRect = new Rect(Screen.width * 0.25f, Screen.height / 25 * 2.2f, Screen.width / 2, Screen.height / 25);
+        _healthRect = new Rect(Screen.width * 0.25f, unitHeight + unitHeight * 2.4f, Screen.width / 2, Screen.height / 25);
+
+        // Locations of heading and velocity dials
+        _headingRect = new Rect(20, 20, Screen.width / 6, Screen.height / 6);
+        _velocityRect = new Rect(Screen.width - (Screen.width / 6 + 20), 20, Screen.width / 6, Screen.height / 6);
     }
 
     void OnGUI()
@@ -67,5 +85,19 @@ public class ProgressInfo : MonoBehaviour
         // Draws the labels over the progress and health bars
         GUI.Label(progressTextRect, "Progress");
         GUI.Label(healthTextRect, "Ship Health");
+
+        // Draws the dial backgrounds for heading and velocity
+        GUI.DrawTexture(_headingRect, _dialBack);
+        GUI.DrawTexture(_velocityRect, _dialBack);
+
+        // Draw labels for score and multiplier
+        GUISkin current = GUI.skin;
+        Color currentColor = GUI.color;
+        GUI.skin = Skin;
+        GUI.color = Color.green;
+        GUI.Label(new Rect(Screen.width * 0.25f, unitHeight + unitHeight * 2.4f * 2, 400, 100), "Score: " + GameController.Instance.Score);
+        GUI.Label(new Rect(Screen.width * 0.25f * 2, unitHeight + unitHeight * 2.4f * 2, 400, 100), "Multiplier: " + GameController.Instance.Multiplier + "x");
+        GUI.skin = current;
+        GUI.color = currentColor;
     }
 }
