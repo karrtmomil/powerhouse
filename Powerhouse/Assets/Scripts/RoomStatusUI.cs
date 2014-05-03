@@ -61,7 +61,11 @@ public class RoomStatusUI : MonoBehaviour
                 check = true;
             }
         }
-        inRange = check;
+        if (check != inRange)
+        {
+            inRange = check;
+            setRoomStatus(inRange);
+        }
     }
 
     private void OnGUI()
@@ -73,6 +77,31 @@ public class RoomStatusUI : MonoBehaviour
         else
         {
             GUI.DrawTexture(drawRect, ok);
+        }
+    }
+
+    private void setRoomStatus(bool occupied)
+    {
+        switch (name)
+        {
+            case "SpawnComm":
+                GameController.Instance.SetRoomStatus(GameController.ShipRoom.COMMUNICATIONS, occupied);
+                break;
+            case "SpawnControl":
+                GameController.Instance.SetRoomStatus(GameController.ShipRoom.CONTROL, occupied);
+                break;
+            case "SpawnEngine":
+                GameController.Instance.SetRoomStatus(GameController.ShipRoom.ENGINE, occupied);
+                break;
+            case "SpawnPower":
+                GameController.Instance.SetRoomStatus(GameController.ShipRoom.POWER, occupied);
+                break;
+            case "SpawnStorage":
+                GameController.Instance.SetRoomStatus(GameController.ShipRoom.STORAGE, occupied);
+                break;
+            case "SpawnWeapon":
+                GameController.Instance.SetRoomStatus(GameController.ShipRoom.WEAPON, occupied);
+                break;
         }
     }
 }
