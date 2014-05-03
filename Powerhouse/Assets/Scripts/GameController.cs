@@ -35,10 +35,27 @@ public class GameController : MonoBehaviour
 		{
 			velocity = Mathf.Max( Mathf.Min( 1f, value ), 0f );
 		}
-	}
+    }
+
+    //Represents the progress to the destination
+    public float Progress
+    {
+        get;
+        private set;
+    }
+
+    //Represents the health of the ship
+    public float ShipHealth
+    {
+        get;
+        private set;
+    }
 
     //the time, in milliseconds, which will correspond to one unit of movement
     private const int UNIT_OF_MOVEMENT_TIMEFRAME = 200;
+
+    //the time, in milliseconds, between potential 1% progress gains
+    private const int UNIT_OF_PROGRESS_UPDATE_TIMEFRAME = 2000;
 
     //the time, in seconds, between boat spawns when enemies are not present on the ship
     private const int SPAWN_RATE_WHEN_UNOCCUPIED = 7;
@@ -48,15 +65,12 @@ public class GameController : MonoBehaviour
 
     //the current forward velocity of the ship
     private float velocity;
+
+    //the current heading of the ship, represented as a float. 0 = backwards, 1 = directly towards the goal ( 0, 1 ) = percentage of heading
+    private float heading;
 	
 	//the time of the last spawned enemy
 	private float lastEnemySpawned;
-
-    //Represents the progress to the destination
-    public float Progress { get; set; }
-
-    //Represents the health of the ship
-    public float ShipHealth { get; set; }
 
     //the number of enemies currently on the ship
     private int numberOfEnemiesOnShip;
@@ -107,8 +121,16 @@ public class GameController : MonoBehaviour
 			roomHealth.Add( room, 1f );
 		}
 
+        //we start with 0 velocity but are pointed directly towards the goal
+        velocity = 0f;
+        heading = 1f;
+
+        //we have 100% of ships health, but 0% progress
+        ShipHealth = 100f;
+        Progress = 0f;
+
+
 		randy = new System.Random();
-		velocity = 0f;
 		lastEnemySpawned = -1f;
         numberOfEnemiesOnShip = 0;
 		UpdateRoomHealth( ShipRoom.ENGINE, .5f );
@@ -119,14 +141,18 @@ public class GameController : MonoBehaviour
 
 	public void Update()
 	{
-		UpdateShipVelocity( Time.deltaTime );
-		float currentTime = Time.time;
+        float dT = Time.deltaTime;
+        float time = Time.time;
 
+        //update the properties of the ship
+		UpdateShipVelocity( dT );
+        UpdateGameProgress( dT );
+
+        //determine if it's time to spawn an enemy
         int spawnRate = numberOfEnemiesOnShip > 0 ? SPAWN_RATE_WHEN_OCCUPIED : SPAWN_RATE_WHEN_UNOCCUPIED;
-
-        if ( ( (int) Time.time ) % spawnRate == 0 && lastEnemySpawned < Math.Floor( currentTime ) )
+        if (((int)Time.time) % spawnRate == 0 && lastEnemySpawned < Math.Floor(time))
 		{
-			lastEnemySpawned = currentTime;
+            lastEnemySpawned = time;
 			SpawnBoat();
 		}
 	}
@@ -159,6 +185,18 @@ public class GameController : MonoBehaviour
 
 		velocity = Mathf.Max( Mathf.Min ( potential, 1f ), 0f );
 	}
+
+
+
+    /**
+     * updates progress towards the goal based on the time passed since the last update
+     */
+    public void UpdateGameProgress(float delta)
+    {
+        float dPotential = delta / UNIT_OF_PROGRESS_UPDATE_TIMEFRAME;
+        float potential = heading * velocity * dPotential;
+        Progress += potential;
+    }
 
 
 
