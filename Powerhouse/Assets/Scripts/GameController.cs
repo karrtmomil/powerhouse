@@ -55,7 +55,7 @@ public class GameController : MonoBehaviour
     private const int UNIT_OF_MOVEMENT_TIMEFRAME = 200;
 
     //the time, in milliseconds, between potential 1% progress gains
-    private const int UNIT_OF_PROGRESS_UPDATE_TIMEFRAME = 2000;
+    private const int UNIT_OF_PROGRESS_UPDATE_TIMEFRAME = 2;
 
     //the time, in seconds, between boat spawns when enemies are not present on the ship
     private const int SPAWN_RATE_WHEN_UNOCCUPIED = 7;
@@ -93,6 +93,9 @@ public class GameController : MonoBehaviour
 	//an array of GameObjects, used as spawn points, that Unity will initialize
 	public GameObject[] boatSpawnPoints;
 
+    //a dictionary which represents the occupied state of each room
+    private Dictionary<ShipRoom, bool> roomStatus;
+
     // Lets us know if user is in the turrent to switch some UI information
     public bool inTurret;
 
@@ -128,6 +131,13 @@ public class GameController : MonoBehaviour
         //we have 100% of ships health, but 0% progress
         ShipHealth = 1f;
         Progress = 0f;
+
+        //initialize the status of each room
+        roomStatus = new Dictionary<ShipRoom, bool>();
+        foreach (ShipRoom room in (ShipRoom[])Enum.GetValues(typeof(ShipRoom)))
+        {
+            roomStatus.Add(room, false);
+        }
 
 
 		randy = new System.Random();
@@ -265,6 +275,15 @@ public class GameController : MonoBehaviour
 		//store the new health of the given room into the dictionary
 		roomHealth[ room ] = health;
 	}
+
+
+    /**
+     * changes the state of a room, given the room and the status to modify
+     */
+    public void SetRoomStatus(ShipRoom room, bool occupied)
+    {
+        roomStatus[room] = occupied;
+    }
 
 
 	/**
