@@ -126,7 +126,7 @@ public class GameController : MonoBehaviour
         heading = 1f;
 
         //we have 100% of ships health, but 0% progress
-        ShipHealth = 100f;
+        ShipHealth = 1f;
         Progress = 0f;
 
 
@@ -195,7 +195,7 @@ public class GameController : MonoBehaviour
     {
         float dPotential = delta / UNIT_OF_PROGRESS_UPDATE_TIMEFRAME;
         float potential = heading * velocity * dPotential;
-        Progress += potential;
+        Progress += ( potential * 0.01f );
     }
 
 
