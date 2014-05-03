@@ -52,6 +52,12 @@ public class GameController : MonoBehaviour
 	//the time of the last spawned enemy
 	private float lastEnemySpawned;
 
+    //Represents the progress to the destination
+    public float Progress { get; set; }
+
+    //Represents the health of the ship
+    public float ShipHealth { get; set; }
+
     //the number of enemies currently on the ship
     private int numberOfEnemiesOnShip;
 
