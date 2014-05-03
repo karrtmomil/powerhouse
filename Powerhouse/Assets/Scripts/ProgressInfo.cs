@@ -50,7 +50,7 @@ public class ProgressInfo : MonoBehaviour
     {
         // Draws progress and health bars
         GUITools.progressBar(_progressFore, _progressBack, _line, LINE_WIDTH, _progressRect, GameController.Instance.Progress);
-        GUITools.progressBar(_healthFore, _healthBack, _line, LINE_WIDTH, _healthRect, GameController.Instance.Progress);
+        GUITools.progressBar(_healthFore, _healthBack, _line, LINE_WIDTH, _healthRect, GameController.Instance.ShipHealth);
 
         // Gets text size (width and height) of progress and health bar labels
         Vector2 progressTextSize = GUI.skin.GetStyle("Label").CalcSize(new GUIContent("Progress"));
