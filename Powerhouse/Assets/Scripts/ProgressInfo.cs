@@ -70,6 +70,11 @@ public class ProgressInfo : MonoBehaviour
 
     void OnGUI()
     {
+        if (GameController.Instance.RoomStatus[GameController.ShipRoom.COMMUNICATIONS])
+        {
+            GUI.color = Color.black;
+        }
+         
         // Draws progress and health bars
         GUITools.progressBar(_progressFore, _progressBack, _line, LINE_WIDTH, _progressRect, GameController.Instance.Progress);
         GUITools.progressBar(_healthFore, _healthBack, _line, LINE_WIDTH, _healthRect, GameController.Instance.ShipHealth);
