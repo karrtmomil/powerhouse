@@ -20,14 +20,15 @@ public class EnterTurret : MonoBehaviour
     {
         if (Vector3.Distance(player.transform.position, transform.position) < 4)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && !GameController.Instance.RoomStatus[GameController.ShipRoom.WEAPON])
             {
                 child.SetActive(true);
                 currentCamera.SetActive(false);
                 GameController.Instance.inTurret = true;
 				this.gameObject.GetComponent<TurretMouseLook>().enabled = true;
             }
-            if (GameController.Instance.inTurret && Input.GetMouseButtonDown(1))
+            if (GameController.Instance.GameOver || (GameController.Instance.inTurret && 
+                (Input.GetMouseButtonDown(1) || GameController.Instance.RoomStatus[GameController.ShipRoom.WEAPON])))
             {
                 currentCamera.SetActive(true);
                 child.SetActive(false);
