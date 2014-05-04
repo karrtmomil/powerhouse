@@ -16,7 +16,7 @@ public class TurretMouseLook: MonoBehaviour {
 	public float maximumX = 360F;
 	
 	public float minimumY = -90F;
-	public float maximumY = 0;
+	public float maximumY = -60F;
 	
 	float rotationY = -90F;
 	
@@ -24,14 +24,17 @@ public class TurretMouseLook: MonoBehaviour {
 	{
 		if (axes == RotationAxes.MouseXAndY)
 		{
-			//float rotationX = transform.localEulerAngles.z + Input.GetAxis("Mouse X") * sensitivityX;
-			
 			rotationY += Input.GetAxis("Mouse Y") * sensitivityY;
 			rotationY = Mathf.Clamp (rotationY, minimumY, maximumY);
-			
-			//transform.localEulerAngles = new Vector3(rotationY, transform.localEulerAngles.y, rotationX);
-			transform.localEulerAngles = new Vector3(rotationY, transform.localEulerAngles.y, transform.localEulerAngles.z);			
 			transform.Rotate(0, Input.GetAxis("Mouse X") * sensitivityX, 0, Space.World);
+			float rotationX = ClampX(transform.localEulerAngles.y, minimumX, maximumX);
+
+
+
+			transform.localEulerAngles = new Vector3(rotationY, rotationX, transform.localEulerAngles.z);			
+
+
+		
 		}
 		else if (axes == RotationAxes.MouseX)
 		{
@@ -52,6 +55,41 @@ public class TurretMouseLook: MonoBehaviour {
 		// Make the rigid body not change rotation
 		if (rigidbody)
 			rigidbody.freezeRotation = true;
+	}
+
+	private float ClampX(float rotation, float minimum, float maximum)
+	{
+
+		if (minimumX < 0) 
+		{
+			float shift = -minimum;
+			rotation += shift;
+			if(rotation >= 360)
+				rotation -= 360;
+
+			maximum += shift;
+			rotation = Mathf.Clamp(rotation, 0f, maximum);
+
+			Debug.Log(rotation);
+
+			rotation -= shift;
+			Debug.Log(rotation);
+
+			if (rotation < minimum)
+			{
+				rotation = 360 + minimum;
+			}
+			else if(rotation < 0)
+			{
+				rotation += 360;
+			}
+			Debug.Log(rotation + "," + maximum);
+			return rotation;
+		} 
+		else 
+		{
+			return Mathf.Clamp (transform.localEulerAngles.y, minimumX, maximumX);
+		}
 	}
 }
 
