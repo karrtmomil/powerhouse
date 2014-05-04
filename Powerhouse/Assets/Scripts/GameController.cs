@@ -87,6 +87,9 @@ public class GameController : MonoBehaviour
 	//the time of the last spawned enemy
 	private float lastEnemySpawned;
 
+    //the time of the last storage room hit
+    private float lastStorageRoomDamage;
+
 	//a random number generator, nothing to see here
 	private System.Random randy;
 
@@ -155,11 +158,13 @@ public class GameController : MonoBehaviour
             roomStatus.Add(room, false);
         }
 
-
-		randy = new System.Random();
+        //mark invalid times for events
 		lastEnemySpawned = -1f;
-		UpdateRoomHealth( ShipRoom.ENGINE, .5f );
+        lastStorageRoomDamage = -1;
+
+        //initialize objects
         activeEnemies = new List<GameObject>();
+        randy = new System.Random();
 	}
 
 
@@ -168,12 +173,23 @@ public class GameController : MonoBehaviour
      */
 	public void Update()
 	{
+        if ( ShipHealth <= 0f || Progress >= 1f ) GameOver = true;
         float dT = Time.deltaTime;
         float time = Time.time;
 
         //update the properties of the ship
 		UpdateShipVelocity( dT );
         UpdateGameProgress( dT );
+
+        //we take a percent of damage for every few seconds that an enemy is in the storage room
+        if (roomStatus[ShipRoom.STORAGE])
+        {
+            if (time - lastStorageRoomDamage > 3f)
+            {
+                lastStorageRoomDamage = time;
+                ShipHealth -= 0.01f;
+            }
+        }
 
         //determine if it's time to spawn an enemy
         int spawnRate = activeEnemies.Count > 0 ? SPAWN_RATE_WHEN_OCCUPIED : SPAWN_RATE_WHEN_UNOCCUPIED;
@@ -340,6 +356,7 @@ public class GameController : MonoBehaviour
     public void onBoatCollision( GameObject gameObject )
     {
         int numberOfEnemies = gameObject.transform.childCount - 1;
+        ShipHealth -= ( 2 + numberOfEnemies ) * 0.01f;
         Multiplier = 1;
 
         GameObject.Destroy( gameObject );
