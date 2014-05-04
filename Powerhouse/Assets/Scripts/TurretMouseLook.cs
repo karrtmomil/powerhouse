@@ -29,11 +29,7 @@ public class TurretMouseLook: MonoBehaviour {
 			transform.Rotate(0, Input.GetAxis("Mouse X") * sensitivityX, 0, Space.World);
 			float rotationX = ClampX(transform.localEulerAngles.y, minimumX, maximumX);
 
-
-
-			transform.localEulerAngles = new Vector3(rotationY, rotationX, transform.localEulerAngles.z);			
-
-
+			transform.localEulerAngles = new Vector3(rotationY, rotationX, transform.localEulerAngles.z);
 		
 		}
 		else if (axes == RotationAxes.MouseX)
@@ -64,26 +60,22 @@ public class TurretMouseLook: MonoBehaviour {
 		{
 			float shift = -minimum;
 			rotation += shift;
-			if(rotation >= 360)
+			if(rotation >= 359)
 				rotation -= 360;
 
 			maximum += shift;
 			rotation = Mathf.Clamp(rotation, 0f, maximum);
 
-			Debug.Log(rotation);
+			//Debug.Log(rotation);
 
 			rotation -= shift;
-			Debug.Log(rotation);
+			//Debug.Log(rotation);
 
-			if (rotation < minimum)
-			{
-				rotation = 360 + minimum;
-			}
-			else if(rotation < 0)
+			if(rotation < 0)
 			{
 				rotation += 360;
 			}
-			Debug.Log(rotation + "," + maximum);
+			//Debug.Log(rotation + "," + maximum);
 			return rotation;
 		} 
 		else 
