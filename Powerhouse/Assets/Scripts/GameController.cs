@@ -66,6 +66,13 @@ public class GameController : MonoBehaviour
         private set;
     }
 
+    //a dictionary which represents the occupied state of each room
+    private Dictionary<ShipRoom, bool> RoomStatus
+    {
+        get;
+        private set;
+    }
+
     //the time, in milliseconds, which will correspond to one unit of movement
     private const int UNIT_OF_MOVEMENT_TIMEFRAME = 200;
 
@@ -108,9 +115,6 @@ public class GameController : MonoBehaviour
 	//an array of GameObjects, used as spawn points, that Unity will initialize
 	public GameObject[] boatSpawnPoints;
 
-    //a dictionary which represents the occupied state of each room
-    private Dictionary<ShipRoom, bool> roomStatus;
-
     // Lets us know if user is in the turrent to switch some UI information
     public bool inTurret;
 
@@ -152,10 +156,10 @@ public class GameController : MonoBehaviour
         Multiplier = 1;
 
         //initialize the status of each room
-        roomStatus = new Dictionary<ShipRoom, bool>();
+        RoomStatus = new Dictionary<ShipRoom, bool>();
         foreach (ShipRoom room in (ShipRoom[])Enum.GetValues(typeof(ShipRoom)))
         {
-            roomStatus.Add(room, false);
+            RoomStatus.Add(room, false);
         }
 
         //mark invalid times for events
@@ -173,6 +177,7 @@ public class GameController : MonoBehaviour
      */
 	public void Update()
 	{
+        print("velo: " + Velocity);
         if ( ShipHealth <= 0f || Progress >= 1f ) GameOver = true;
         float dT = Time.deltaTime;
         float time = Time.time;
@@ -182,7 +187,7 @@ public class GameController : MonoBehaviour
         UpdateGameProgress( dT );
 
         //we take a percent of damage for every few seconds that an enemy is in the storage room
-        if (roomStatus[ShipRoom.STORAGE])
+        if (RoomStatus[ShipRoom.STORAGE])
         {
             if (time - lastStorageRoomDamage > 3f)
             {
@@ -210,7 +215,7 @@ public class GameController : MonoBehaviour
     {
         //determine the potential velocity based on the status of three rooms: Power, Engine, and Control
         //float vPotential = roomHealth[ ShipRoom.CONTROL ] * roomHealth[ ShipRoom.ENGINE ] * roomHealth[ ShipRoom.POWER ];
-        float vPotential = (roomStatus[ShipRoom.ENGINE] || roomStatus[ShipRoom.POWER]) ? -1f : 1f;
+        float vPotential = (RoomStatus[ShipRoom.ENGINE] || RoomStatus[ShipRoom.POWER]) ? -1f : 1f;
 
         //the amount of change possible depends on the amount of time passed
         float dPotential = delta / UNIT_OF_MOVEMENT_TIMEFRAME;
@@ -230,7 +235,7 @@ public class GameController : MonoBehaviour
     public void UpdateShipHeading(float delta)
     {
         //determine the potential velocity based on the status of three rooms: Power, Engine, and Control
-        float hPotential = (roomStatus[ShipRoom.ENGINE] || roomStatus[ShipRoom.POWER]) ? -1f : 1f;
+        float hPotential = RoomStatus[ShipRoom.CONTROL] ? -1f : 1f;
 
         //the amount of change possible depends on the amount of time passed
         float dHeading = delta / UNIT_OF_HEADING_CHANGE;
@@ -327,7 +332,7 @@ public class GameController : MonoBehaviour
      */
     public void SetRoomStatus(ShipRoom room, bool occupied)
     {
-        roomStatus[room] = occupied;
+        RoomStatus[room] = occupied;
     }
 
 
