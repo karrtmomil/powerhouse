@@ -5,14 +5,16 @@ public class EnterTurret : MonoBehaviour
 {
     private GameObject player;
     private GUISkin skin;
+	private Quaternion originalRotation;
     public GameObject child;
     public GameObject currentCamera;
 
     private void Start()
     {
         player = GameObject.Find("First Person Controller");
-        skin = Resources.Load<GUISkin>("gameSkin");
-    }
+        skin = Resources.Load<GUISkin>("gameSkin");		
+		originalRotation = this.transform.rotation;
+	}
 
     private void Update()
     {
@@ -23,12 +25,15 @@ public class EnterTurret : MonoBehaviour
                 child.SetActive(true);
                 currentCamera.SetActive(false);
                 GameController.Instance.inTurret = true;
+				this.gameObject.GetComponent<TurretMouseLook>().enabled = true;
             }
             if (GameController.Instance.inTurret && Input.GetMouseButtonDown(1))
             {
                 currentCamera.SetActive(true);
                 child.SetActive(false);
                 GameController.Instance.inTurret = false;
+				this.gameObject.GetComponent<TurretMouseLook>().enabled = false;
+				this.transform.rotation = originalRotation;
             }
         }
     }
