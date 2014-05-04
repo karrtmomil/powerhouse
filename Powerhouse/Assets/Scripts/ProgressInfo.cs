@@ -16,6 +16,8 @@ public class ProgressInfo : MonoBehaviour
     private Texture2D _healthBack;
     private Texture2D _line;
     private Texture2D _dialBack;
+    private Texture2D _arrowDown;
+    private Texture2D _arrowUp;
 
     // Locations of progress and health bars
     private Rect _progressRect;
@@ -25,12 +27,17 @@ public class ProgressInfo : MonoBehaviour
     private Rect _headingRect;
     private Rect _velocityRect;
 
-    private float unitHeight;
+    private float _unitHeight;
+
+    private float _prevHeading;
+    private float _prevVelocity;
 
     void Start()
     {
-        // Load dial image
+        // Load dial image and arrows
         _dialBack = Resources.Load<Texture2D>("Textures/dial");
+        _arrowDown = Resources.Load<Texture2D>("Textures/arrowDown");
+        _arrowUp = Resources.Load<Texture2D>("Textures/arrowUp");
 
         // Initializes textures used
         _progressFore = new Texture2D(1, 1);
@@ -53,11 +60,11 @@ public class ProgressInfo : MonoBehaviour
         _healthBack.Apply();
         _line.Apply();
 
-        unitHeight = Screen.height / 25 * 0.5f;
+        _unitHeight = Screen.height / 25 * 0.5f;
         // Location of progress bar on screen
-        _progressRect = new Rect(Screen.width * 0.25f, unitHeight, Screen.width / 2, Screen.height / 25);
+        _progressRect = new Rect(Screen.width * 0.25f, _unitHeight, Screen.width / 2, Screen.height / 25);
         // Location of health bar on screen
-        _healthRect = new Rect(Screen.width * 0.25f, unitHeight + unitHeight * 2.4f, Screen.width / 2, Screen.height / 25);
+        _healthRect = new Rect(Screen.width * 0.25f, _unitHeight + _unitHeight * 2.4f, Screen.width / 2, Screen.height / 25);
 
         // Locations of heading and velocity dials
         _headingRect = new Rect(20, 20, Screen.width / 6, Screen.height / 6);
@@ -90,14 +97,38 @@ public class ProgressInfo : MonoBehaviour
         GUI.DrawTexture(_headingRect, _dialBack);
         GUI.DrawTexture(_velocityRect, _dialBack);
 
+        // Calculates and draws labels for dials
+        Vector2 headingTextSize = GUI.skin.GetStyle("Label").CalcSize(new GUIContent("Heading"));
+        Vector2 velocityTextSize = GUI.skin.GetStyle("Label").CalcSize(new GUIContent("Velocity"));
+        Rect headingTextRect = new Rect(_headingRect.x + (_headingRect.width / 2 - headingTextSize.x / 2),
+            _headingRect.y + _headingRect.height - (headingTextSize.y + 2), headingTextSize.x, headingTextSize.y);
+        Rect velocityTextRect = new Rect(_velocityRect.x + (_velocityRect.width / 2 - velocityTextSize.x / 2),
+            _velocityRect.y + _velocityRect.height - (velocityTextSize.y + 2), velocityTextSize.x, velocityTextSize.y);
+        GUI.Label(headingTextRect, "Heading");
+        GUI.Label(velocityTextRect, "Velocity");
+
+        // Draw dial increase/decrease notifiers
+        if (GameController.Instance.Heading >= _prevHeading)
+            GUI.DrawTexture(new Rect(headingTextRect.x + headingTextRect.width + 5, _headingRect.y + _headingRect.height - (Screen.height / 40 + 8), Screen.width / 35, Screen.height / 40), _arrowUp);
+        else
+            GUI.DrawTexture(new Rect(headingTextRect.x - (Screen.width / 35 + 5), _headingRect.y + _headingRect.height - (Screen.height / 40 + 8), Screen.width / 35, Screen.height / 40), _arrowDown);
+        if (GameController.Instance.Velocity >= _prevVelocity)
+            GUI.DrawTexture(new Rect(velocityTextRect.x + velocityTextRect.width + 5, _headingRect.y + _headingRect.height - (Screen.height / 40 + 8), Screen.width / 35, Screen.height / 40), _arrowUp);
+        else
+            GUI.DrawTexture(new Rect(velocityTextRect.x - (Screen.width / 35 + 5), _headingRect.y + _headingRect.height - (Screen.height / 40 + 8), Screen.width / 35, Screen.height / 40), _arrowDown);
+
         // Draw labels for score and multiplier
         GUISkin current = GUI.skin;
         Color currentColor = GUI.color;
         GUI.skin = Skin;
         GUI.color = Color.green;
-        GUI.Label(new Rect(Screen.width * 0.25f, unitHeight + unitHeight * 2.4f * 2, 400, 100), "Score: " + GameController.Instance.Score);
-        GUI.Label(new Rect(Screen.width * 0.25f * 2, unitHeight + unitHeight * 2.4f * 2, 400, 100), "Multiplier: " + GameController.Instance.Multiplier + "x");
+        GUI.Label(new Rect(Screen.width * 0.25f, _unitHeight + _unitHeight * 2.4f * 2, 400, 100), "Score: " + GameController.Instance.Score);
+        GUI.Label(new Rect(Screen.width * 0.25f * 2, _unitHeight + _unitHeight * 2.4f * 2, 400, 100), "Multiplier: " + GameController.Instance.Multiplier + "x");
         GUI.skin = current;
         GUI.color = currentColor;
+
+        // Set previous values to current
+        _prevHeading = GameController.Instance.Heading;
+        _prevVelocity = GameController.Instance.Velocity;
     }
 }
