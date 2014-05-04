@@ -67,7 +67,7 @@ public class GameController : MonoBehaviour
     }
 
     //a dictionary which represents the occupied state of each room
-    private Dictionary<ShipRoom, bool> RoomStatus
+    public Dictionary<ShipRoom, bool> RoomStatus
     {
         get;
         private set;
