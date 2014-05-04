@@ -149,6 +149,9 @@ public class GameController : MonoBehaviour
     // Objects of current active enemies
     public List<GameObject> activeEnemies;
 
+    // Objects of current active boats
+    public List<GameObject> activeBoats;
+
     // Creates an instance of itself
     private void Awake()
     {
@@ -195,6 +198,7 @@ public class GameController : MonoBehaviour
 
         //initialize objects
         activeEnemies = new List<GameObject>();
+        activeBoats = new List<GameObject>();
         randy = new System.Random();
 	}
 
@@ -374,10 +378,8 @@ public class GameController : MonoBehaviour
 	 */
 	public void SpawnBoat()
 	{
-        InstantiateAtRandomSpawnPoint( boatGameObject, boatSpawnPoints );
+        activeBoats.Add(InstantiateAtRandomSpawnPoint( boatGameObject, boatSpawnPoints ));
 	}
-
-
 
     /**
      * spawns a single enemy into a random room
@@ -397,6 +399,7 @@ public class GameController : MonoBehaviour
         shipHealth -= ( 5 + numberOfEnemies ) * 0.01f;
         Multiplier = 1;
 
+        activeBoats.Remove(gameObject);
         GameObject.Destroy( gameObject );
 
         //each enemy on the boat gives a chance of spawning an enemy onto the boat
