@@ -208,38 +208,40 @@ public class GameController : MonoBehaviour
      */
 	public void Update()
     {
-        if (GameOver) return;
-        if (ShipHealth <= 0f || Progress >= 1f)
+        if (!GameOver)
         {
-            GameOver = true;
-            return;
-        }
-
-        float dT = Time.deltaTime;
-        float time = Time.time;
-
-        //update the properties of the ship
-		UpdateShipVelocity( dT );
-        UpdateShipHeading( dT );
-        UpdateGameProgress( dT );
-
-        //we take a percent of damage for every few seconds that an enemy is in the storage room
-        if (RoomStatus[ShipRoom.STORAGE])
-        {
-            if (time - lastStorageRoomDamage > 3f)
+            if (ShipHealth <= 0f || Progress >= 1f)
             {
-                lastStorageRoomDamage = time;
-                shipHealth -= 0.01f;
+                GameOver = true;
+                return;
+            }
+
+            float dT = Time.deltaTime;
+            float time = Time.time;
+
+            //update the properties of the ship
+            UpdateShipVelocity(dT);
+            UpdateShipHeading(dT);
+            UpdateGameProgress(dT);
+
+            //we take a percent of damage for every few seconds that an enemy is in the storage room
+            if (RoomStatus[ShipRoom.STORAGE])
+            {
+                if (time - lastStorageRoomDamage > 3f)
+                {
+                    lastStorageRoomDamage = time;
+                    shipHealth -= 0.01f;
+                }
+            }
+
+            //determine if it's time to spawn an enemy
+            int spawnRate = activeEnemies.Count > 0 ? SPAWN_RATE_WHEN_OCCUPIED : SPAWN_RATE_WHEN_UNOCCUPIED;
+            if (((int)Time.time) % spawnRate == 0 && lastEnemySpawned < Math.Floor(time))
+            {
+                lastEnemySpawned = time;
+                SpawnBoat();
             }
         }
-
-        //determine if it's time to spawn an enemy
-        int spawnRate = activeEnemies.Count > 0 ? SPAWN_RATE_WHEN_OCCUPIED : SPAWN_RATE_WHEN_UNOCCUPIED;
-        if (((int)Time.time) % spawnRate == 0 && lastEnemySpawned < Math.Floor(time))
-		{
-            lastEnemySpawned = time;
-			SpawnBoat();
-		}
 	}
 
 

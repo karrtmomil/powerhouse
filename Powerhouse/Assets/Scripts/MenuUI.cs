@@ -6,14 +6,12 @@ public class MenuUI : MonoBehaviour
     private Texture _title;
     private Rect _titleRect;
     public  GUISkin _style;
-    private Rect _startRect;
 
 	private void Start () 
     {
         Screen.showCursor = true;
         _title = Resources.Load<Texture>(@"Textures/title");
         _titleRect = new Rect(Screen.width / 2 - Screen.width * 0.75f / 2, 20, Screen.width * 0.75f, Screen.height * 0.3f);
-        _startRect = new Rect(Screen.width / 2 - 200, Screen.height - 100, 400, 70);
 	}
 
     private void OnGUI()
@@ -23,17 +21,20 @@ public class MenuUI : MonoBehaviour
         GUI.skin = _style;
         GUI.DrawTexture(_titleRect, _title);
 
+        Vector2 textSize = GUI.skin.GetStyle("Label").CalcSize(new GUIContent("Start Game"));
+        Rect textLocation = new Rect(Screen.width / 2 - textSize.x / 2, Screen.height - 120, textSize.x, textSize.y);
+
         Color prevColor = GUI.color;
-        if (_startRect.Contains(mousePos))
+        if (textLocation.Contains(mousePos))
         {
             GUI.color = Color.gray;
-            GUI.Label(_startRect, "Start Game");
-            if (GUI.Button(_startRect, "", "Label"))
+            GUI.Label(textLocation, "Start Game");
+            if (GUI.Button(textLocation, "", "Label"))
                 Application.LoadLevel("Game");
         }
         else
         {
-            GUI.Label(_startRect, "Start Game");
+            GUI.Label(textLocation, "Start Game");
         }
 
         GUI.color = prevColor;
