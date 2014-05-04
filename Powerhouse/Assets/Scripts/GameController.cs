@@ -204,8 +204,14 @@ public class GameController : MonoBehaviour
      * the update function called by Unity at every frame
      */
 	public void Update()
-	{
-        if ( ShipHealth <= 0f || Progress >= 1f ) GameOver = true;
+    {
+        if (GameOver) return;
+        if (ShipHealth <= 0f || Progress >= 1f)
+        {
+            GameOver = true;
+            return;
+        }
+
         float dT = Time.deltaTime;
         float time = Time.time;
 
@@ -389,7 +395,7 @@ public class GameController : MonoBehaviour
     public void onBoatCollision( GameObject gameObject )
     {
         int numberOfEnemies = gameObject.transform.childCount - 1;
-        shipHealth -= ( 2 + numberOfEnemies ) * 0.01f;
+        shipHealth -= ( 5 + numberOfEnemies ) * 0.01f;
         Multiplier = 1;
 
         GameObject.Destroy( gameObject );
