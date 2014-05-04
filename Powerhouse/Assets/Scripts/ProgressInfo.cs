@@ -28,10 +28,23 @@ public class ProgressInfo : MonoBehaviour
     private Rect _headingRect;
     private Rect _velocityRect;
 
+    // Height offset for ui elements
     private float _unitHeight;
+
+    // These get disabled when game is over
+    private GameObject _main;
+    private GameObject _turret1;
+    private GameObject _turret2;
+    private GameObject _turret3;
 
     void Start()
     {
+        // Get ahold of objects for end of game state
+        _main = GameObject.Find("First Person Controller");
+        _turret1 = GameObject.Find("turret1");
+        _turret2 = GameObject.Find("turret2");
+        _turret3 = GameObject.Find("turret3");
+
         // Load dial image and arrows
         _dialBack = Resources.Load<Texture2D>("Textures/dial");
         _arrowDown = Resources.Load<Texture2D>("Textures/arrowDown");
@@ -72,8 +85,20 @@ public class ProgressInfo : MonoBehaviour
         _velocityRect = new Rect(Screen.width - (Screen.width / 6 + 20), 20, Screen.width / 6, Screen.height / 6);
     }
 
+    void Update()
+    {
+        if (GameController.Instance.GameOver)
+        {
+            _main.SetActive(false);
+            _turret1.SetActive(false);
+            _turret1.SetActive(false);
+            _turret1.SetActive(false);
+        }
+    }
+
     void OnGUI()
     {
+        // If comm room is down disable its viewing by blacking it out
         if (GameController.Instance.RoomStatus[GameController.ShipRoom.COMMUNICATIONS])
         {
             GUI.color = Color.black;
@@ -138,13 +163,38 @@ public class ProgressInfo : MonoBehaviour
         Vector2 velocityDialOrigin = new Vector2(_velocityRect.x + _velocityRect.width / 2 - 4, _velocityRect.y + _velocityRect.height * 0.76f);
         float hDegree = GameController.Instance.Heading;
         float vDegree = GameController.Instance.Velocity;
-        int headingX = (int)(100 * Mathf.Cos(Mathf.PI * hDegree));
-        int headingY = (int)(100 * Mathf.Sin(Mathf.PI * hDegree));
-        int velocityX = (int)(100 * Mathf.Cos(Mathf.PI * vDegree));
-        int velocityY = (int)(100 * Mathf.Sin(Mathf.PI * vDegree));
+        int headingX = (int)(80 * Mathf.Cos(Mathf.PI * hDegree));
+        int headingY = (int)(80 * Mathf.Sin(Mathf.PI * hDegree));
+        int velocityX = (int)(80 * Mathf.Cos(Mathf.PI * vDegree));
+        int velocityY = (int)(80 * Mathf.Sin(Mathf.PI * vDegree));
         Vector2 headingEnd = new Vector2(headingDialOrigin.x - headingX, headingDialOrigin.y - headingY);
         Vector2 velocityEnd = new Vector2(velocityDialOrigin.x - velocityX, velocityDialOrigin.y - velocityY);
         GUITools.DrawLine(headingDialOrigin, headingEnd, _dial, 8);
         GUITools.DrawLine(velocityDialOrigin, velocityEnd, _dial, 8);
+
+        // Prints game over state
+        if (GameController.Instance.GameOver)
+        {
+            current = GUI.skin;
+            currentColor = GUI.color;
+            GUI.skin = Skin;
+            if (GameController.Instance.ShipHealth == 0)
+            {
+                GUI.color = Color.red;
+                Vector2 gameOver = GUI.skin.GetStyle("Label").CalcSize(new GUIContent("YOU LOSE!"));
+                GUI.Label(new Rect(Screen.width / 2 - gameOver.x / 2, Screen.height / 2 - gameOver.y / 2, gameOver.x, gameOver.y), "YOU LOSE!");
+            }
+            else
+            {
+                GUI.color = Color.green;
+                Vector2 gameOver = GUI.skin.GetStyle("Label").CalcSize(new GUIContent("YOU WIN!"));
+                GUI.Label(new Rect(Screen.width / 2 - gameOver.x / 2, Screen.height / 2 - gameOver.y / 2, gameOver.x, gameOver.y), "YOU WIN!");
+            }
+            GUI.skin = current;
+            GUI.color = currentColor;
+
+            if(Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.KeypadEnter))
+                Application.LoadLevel("Start");
+        }
     }
 }
