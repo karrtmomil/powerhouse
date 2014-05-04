@@ -208,6 +208,9 @@ public class GameController : MonoBehaviour
      */
 	public void Update()
     {
+        if (Input.GetKey(KeyCode.Escape))
+            Application.Quit();
+
         if (!GameOver)
         {
             if (ShipHealth <= 0f || Progress >= 1f)

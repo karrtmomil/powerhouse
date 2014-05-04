@@ -40,4 +40,10 @@ public class MenuUI : MonoBehaviour
         GUI.color = prevColor;
         GUI.skin = current;
     }
+
+    void Update()
+    {
+        if (Input.GetKey(KeyCode.Escape))
+            Application.Quit();
+    }
 }
