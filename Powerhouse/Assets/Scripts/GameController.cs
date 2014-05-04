@@ -24,11 +24,18 @@ public class GameController : MonoBehaviour
 		private set;
 	}
 
+    //private variable to represent progress
+    private float progress;
+
     //Represents the progress to the destination
     public float Progress
     {
-        get;
-        private set;
+        get
+        {
+            progress = Mathf.Max(0f, Mathf.Min(1f, progress));
+            return progress;
+        }
+        //private set;
     }
 
     //private variable to represent ship health
@@ -53,17 +60,24 @@ public class GameController : MonoBehaviour
     {
         get
         {
-            velocity = Mathf.Max(0f, Mathf.Min(1f, shipHealth));
+            velocity = Mathf.Max(0f, Mathf.Min(1f, velocity));
             return velocity;
         }
         //private set;
     }
 
+    //private variable to represent ship heading
+    private float heading;
+
     //the current heading of the ship towards the goal, represented as a float. 0 = backwards, 1 = directly towards the goal ( 0, 1 ) = percentage of heading
     public float Heading
     {
-        get;
-        private set;
+        get
+        {
+            heading = Mathf.Max(0f, Mathf.Min(1f, heading));
+            return heading;
+        }
+        //private set;
     }
 
     //the current score multiplier
@@ -159,11 +173,11 @@ public class GameController : MonoBehaviour
 
         //we start with 0 velocity but are pointed directly towards the goal
         velocity = 0f;
-        Heading = 1f;
+        heading = 1f;
 
         //we have 100% of ships health, but 0% progress
         shipHealth = 1f;
-        Progress = 0f;
+        progress = 0f;
 
         //the Score starts at 0, with the multiplier starting at 1
         Score = 0;
@@ -257,7 +271,7 @@ public class GameController : MonoBehaviour
         //the actual amount of change possible
         float potential = hPotential * dHeading;
 
-        Heading = Mathf.Max(Mathf.Min(Heading + potential, 1f), 0f);
+        heading = Mathf.Max(Mathf.Min(Heading + potential, 1f), 0f);
     }
 
 
@@ -269,7 +283,7 @@ public class GameController : MonoBehaviour
     {
         float dPotential = delta / UNIT_OF_PROGRESS_UPDATE_TIMEFRAME;
         float potential = Heading * Velocity * dPotential;
-        Progress += ( potential * 0.01f );
+        progress += ( potential * 0.01f );
     }
 
 
