@@ -31,18 +31,32 @@ public class GameController : MonoBehaviour
         private set;
     }
 
+    //private variable to represent ship health
+    private float shipHealth;
+
     //Represents the health of the ship
     public float ShipHealth
     {
-        get;
-        private set;
+        get
+        {
+            shipHealth = Mathf.Max( 0f, Mathf.Min( 1f, shipHealth ) );
+            return shipHealth;
+        }
+        //private set;
     }
+
+    //private variable to represent ship velocity
+    private float velocity;
 
     //represents the forward velocity of the ship towards the goal
     public float Velocity
     {
-        get;
-        private set;
+        get
+        {
+            velocity = Mathf.Max(0f, Mathf.Min(1f, shipHealth));
+            return velocity;
+        }
+        //private set;
     }
 
     //the current heading of the ship towards the goal, represented as a float. 0 = backwards, 1 = directly towards the goal ( 0, 1 ) = percentage of heading
@@ -144,11 +158,11 @@ public class GameController : MonoBehaviour
 		}
 
         //we start with 0 velocity but are pointed directly towards the goal
-        Velocity = 0f;
+        velocity = 0f;
         Heading = 1f;
 
         //we have 100% of ships health, but 0% progress
-        ShipHealth = 1f;
+        shipHealth = 1f;
         Progress = 0f;
 
         //the Score starts at 0, with the multiplier starting at 1
@@ -192,7 +206,7 @@ public class GameController : MonoBehaviour
             if (time - lastStorageRoomDamage > 3f)
             {
                 lastStorageRoomDamage = time;
-                ShipHealth -= 0.01f;
+                shipHealth -= 0.01f;
             }
         }
 
@@ -223,7 +237,7 @@ public class GameController : MonoBehaviour
         //the actual amount of change possible
         float potential = dPotential * vPotential;
 
-        Velocity = Mathf.Max(Mathf.Min(Velocity + potential, 1f), 0f);
+        velocity = Mathf.Max(Mathf.Min(Velocity + potential, 1f), 0f);
     }
 
 
@@ -361,7 +375,7 @@ public class GameController : MonoBehaviour
     public void onBoatCollision( GameObject gameObject )
     {
         int numberOfEnemies = gameObject.transform.childCount - 1;
-        ShipHealth -= ( 2 + numberOfEnemies ) * 0.01f;
+        shipHealth -= ( 2 + numberOfEnemies ) * 0.01f;
         Multiplier = 1;
 
         GameObject.Destroy( gameObject );
