@@ -105,10 +105,10 @@ public class GameController : MonoBehaviour
     private const int UNIT_OF_MOVEMENT_TIMEFRAME = 200;
 
     //the time, in milliseconds, between potential 1% progress gains
-    private const int UNIT_OF_PROGRESS_UPDATE_TIMEFRAME = 100;
+    private const int UNIT_OF_PROGRESS_UPDATE_TIMEFRAME = 2;
 
     //the time, in milliseconds, between potential 1% heading changes
-    private const int UNIT_OF_HEADING_CHANGE = 1;
+    private const int UNIT_OF_HEADING_CHANGE = 100;
 
     //the time, in seconds, between boat spawns when enemies are not present on the ship
     private const int SPAWN_RATE_WHEN_UNOCCUPIED = 7;
@@ -205,7 +205,6 @@ public class GameController : MonoBehaviour
      */
 	public void Update()
 	{
-        print("heading: " + Heading);
         if ( ShipHealth <= 0f || Progress >= 1f ) GameOver = true;
         float dT = Time.deltaTime;
         float time = Time.time;
