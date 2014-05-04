@@ -99,7 +99,7 @@ public class ProgressInfo : MonoBehaviour
     void OnGUI()
     {
         // If comm room is down disable its viewing by blacking it out
-        if (GameController.Instance.RoomStatus[GameController.ShipRoom.COMMUNICATIONS])
+        if (GameController.Instance.RoomStatus[GameController.ShipRoom.COMMUNICATIONS] && !GameController.Instance.GameOver)
         {
             GUI.color = Color.black;
         }

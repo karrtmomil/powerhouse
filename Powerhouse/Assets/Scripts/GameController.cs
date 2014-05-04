@@ -156,7 +156,6 @@ public class GameController : MonoBehaviour
             GameObject.Destroy(Instance);
         else
             Instance = this;
-        DontDestroyOnLoad(this);
     }
 
 
