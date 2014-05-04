@@ -29,9 +29,6 @@ public class ProgressInfo : MonoBehaviour
 
     private float _unitHeight;
 
-    private float _prevHeading;
-    private float _prevVelocity;
-
     void Start()
     {
         // Load dial image and arrows
@@ -73,6 +70,11 @@ public class ProgressInfo : MonoBehaviour
 
     void OnGUI()
     {
+        if (GameController.Instance.RoomStatus[GameController.ShipRoom.COMMUNICATIONS])
+        {
+            GUI.color = Color.black;
+        }
+         
         // Draws progress and health bars
         GUITools.progressBar(_progressFore, _progressBack, _line, LINE_WIDTH, _progressRect, GameController.Instance.Progress);
         GUITools.progressBar(_healthFore, _healthBack, _line, LINE_WIDTH, _healthRect, GameController.Instance.ShipHealth);
@@ -108,11 +110,11 @@ public class ProgressInfo : MonoBehaviour
         GUI.Label(velocityTextRect, "Velocity");
 
         // Draw dial increase/decrease notifiers
-        if (GameController.Instance.Heading >= _prevHeading)
+        if (!GameController.Instance.RoomStatus[GameController.ShipRoom.CONTROL])
             GUI.DrawTexture(new Rect(headingTextRect.x + headingTextRect.width + 5, _headingRect.y + _headingRect.height - (Screen.height / 40 + 8), Screen.width / 35, Screen.height / 40), _arrowUp);
         else
             GUI.DrawTexture(new Rect(headingTextRect.x - (Screen.width / 35 + 5), _headingRect.y + _headingRect.height - (Screen.height / 40 + 8), Screen.width / 35, Screen.height / 40), _arrowDown);
-        if (GameController.Instance.Velocity >= _prevVelocity)
+        if (!GameController.Instance.RoomStatus[GameController.ShipRoom.ENGINE] && !GameController.Instance.RoomStatus[GameController.ShipRoom.POWER])
             GUI.DrawTexture(new Rect(velocityTextRect.x + velocityTextRect.width + 5, _headingRect.y + _headingRect.height - (Screen.height / 40 + 8), Screen.width / 35, Screen.height / 40), _arrowUp);
         else
             GUI.DrawTexture(new Rect(velocityTextRect.x - (Screen.width / 35 + 5), _headingRect.y + _headingRect.height - (Screen.height / 40 + 8), Screen.width / 35, Screen.height / 40), _arrowDown);
@@ -126,9 +128,5 @@ public class ProgressInfo : MonoBehaviour
         GUI.Label(new Rect(Screen.width * 0.25f * 2, _unitHeight + _unitHeight * 2.4f * 2, 400, 100), "Multiplier: " + GameController.Instance.Multiplier + "x");
         GUI.skin = current;
         GUI.color = currentColor;
-
-        // Set previous values to current
-        _prevHeading = GameController.Instance.Heading;
-        _prevVelocity = GameController.Instance.Velocity;
     }
 }

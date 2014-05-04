@@ -24,32 +24,60 @@ public class GameController : MonoBehaviour
 		private set;
 	}
 
+    //private variable to represent progress
+    private float progress;
+
     //Represents the progress to the destination
     public float Progress
     {
-        get;
-        private set;
+        get
+        {
+            progress = Mathf.Max(0f, Mathf.Min(1f, progress));
+            return progress;
+        }
+        //private set;
     }
+
+    //private variable to represent ship health
+    private float shipHealth;
 
     //Represents the health of the ship
     public float ShipHealth
     {
-        get;
-        private set;
+        get
+        {
+            shipHealth = Mathf.Max( 0f, Mathf.Min( 1f, shipHealth ) );
+            return shipHealth;
+        }
+        //private set;
     }
+
+    //private variable to represent ship velocity
+    private float velocity;
 
     //represents the forward velocity of the ship towards the goal
     public float Velocity
     {
-        get;
-        private set;
+        get
+        {
+            velocity = Mathf.Max(0f, Mathf.Min(1f, velocity));
+            return velocity;
+        }
+        //private set;
     }
+
+    //private variable to represent ship heading
+    private float heading;
 
     //the current heading of the ship towards the goal, represented as a float. 0 = backwards, 1 = directly towards the goal ( 0, 1 ) = percentage of heading
     public float Heading
     {
-        get;
-        private set;
+        get
+        {
+            heading = Mathf.Max(0f, Mathf.Min(1f, heading));
+            return heading;
+        }
+        //private set;
     }
 
     //the current score multiplier
@@ -61,6 +89,13 @@ public class GameController : MonoBehaviour
 
     //the current score
     public int Score
+    {
+        get;
+        private set;
+    }
+
+    //a dictionary which represents the occupied state of each room
+    public Dictionary<ShipRoom, bool> RoomStatus
     {
         get;
         private set;
@@ -108,9 +143,6 @@ public class GameController : MonoBehaviour
 	//an array of GameObjects, used as spawn points, that Unity will initialize
 	public GameObject[] boatSpawnPoints;
 
-    //a dictionary which represents the occupied state of each room
-    private Dictionary<ShipRoom, bool> roomStatus;
-
     // Lets us know if user is in the turrent to switch some UI information
     public bool inTurret;
 
@@ -140,22 +172,22 @@ public class GameController : MonoBehaviour
 		}
 
         //we start with 0 velocity but are pointed directly towards the goal
-        Velocity = 0f;
-        Heading = 1f;
+        velocity = 0f;
+        heading = 1f;
 
         //we have 100% of ships health, but 0% progress
-        ShipHealth = 1f;
-        Progress = 0f;
+        shipHealth = 1f;
+        progress = 0f;
 
         //the Score starts at 0, with the multiplier starting at 1
         Score = 0;
         Multiplier = 1;
 
         //initialize the status of each room
-        roomStatus = new Dictionary<ShipRoom, bool>();
+        RoomStatus = new Dictionary<ShipRoom, bool>();
         foreach (ShipRoom room in (ShipRoom[])Enum.GetValues(typeof(ShipRoom)))
         {
-            roomStatus.Add(room, false);
+            RoomStatus.Add(room, false);
         }
 
         //mark invalid times for events
@@ -173,6 +205,7 @@ public class GameController : MonoBehaviour
      */
 	public void Update()
 	{
+        print("velo: " + Velocity);
         if ( ShipHealth <= 0f || Progress >= 1f ) GameOver = true;
         float dT = Time.deltaTime;
         float time = Time.time;
@@ -182,12 +215,12 @@ public class GameController : MonoBehaviour
         UpdateGameProgress( dT );
 
         //we take a percent of damage for every few seconds that an enemy is in the storage room
-        if (roomStatus[ShipRoom.STORAGE])
+        if (RoomStatus[ShipRoom.STORAGE])
         {
             if (time - lastStorageRoomDamage > 3f)
             {
                 lastStorageRoomDamage = time;
-                ShipHealth -= 0.01f;
+                shipHealth -= 0.01f;
             }
         }
 
@@ -210,7 +243,7 @@ public class GameController : MonoBehaviour
     {
         //determine the potential velocity based on the status of three rooms: Power, Engine, and Control
         //float vPotential = roomHealth[ ShipRoom.CONTROL ] * roomHealth[ ShipRoom.ENGINE ] * roomHealth[ ShipRoom.POWER ];
-        float vPotential = (roomStatus[ShipRoom.ENGINE] || roomStatus[ShipRoom.POWER]) ? -1f : 1f;
+        float vPotential = (RoomStatus[ShipRoom.ENGINE] || RoomStatus[ShipRoom.POWER]) ? -1f : 1f;
 
         //the amount of change possible depends on the amount of time passed
         float dPotential = delta / UNIT_OF_MOVEMENT_TIMEFRAME;
@@ -218,7 +251,7 @@ public class GameController : MonoBehaviour
         //the actual amount of change possible
         float potential = dPotential * vPotential;
 
-        Velocity = Mathf.Max(Mathf.Min(Velocity + potential, 1f), 0f);
+        velocity = Mathf.Max(Mathf.Min(Velocity + potential, 1f), 0f);
     }
 
 
@@ -230,7 +263,7 @@ public class GameController : MonoBehaviour
     public void UpdateShipHeading(float delta)
     {
         //determine the potential velocity based on the status of three rooms: Power, Engine, and Control
-        float hPotential = (roomStatus[ShipRoom.ENGINE] || roomStatus[ShipRoom.POWER]) ? -1f : 1f;
+        float hPotential = RoomStatus[ShipRoom.CONTROL] ? -1f : 1f;
 
         //the amount of change possible depends on the amount of time passed
         float dHeading = delta / UNIT_OF_HEADING_CHANGE;
@@ -238,7 +271,7 @@ public class GameController : MonoBehaviour
         //the actual amount of change possible
         float potential = hPotential * dHeading;
 
-        Heading = Mathf.Max(Mathf.Min(Heading + potential, 1f), 0f);
+        heading = Mathf.Max(Mathf.Min(Heading + potential, 1f), 0f);
     }
 
 
@@ -250,7 +283,7 @@ public class GameController : MonoBehaviour
     {
         float dPotential = delta / UNIT_OF_PROGRESS_UPDATE_TIMEFRAME;
         float potential = Heading * Velocity * dPotential;
-        Progress += ( potential * 0.01f );
+        progress += ( potential * 0.01f );
     }
 
 
@@ -327,7 +360,7 @@ public class GameController : MonoBehaviour
      */
     public void SetRoomStatus(ShipRoom room, bool occupied)
     {
-        roomStatus[room] = occupied;
+        RoomStatus[room] = occupied;
     }
 
 
@@ -356,7 +389,7 @@ public class GameController : MonoBehaviour
     public void onBoatCollision( GameObject gameObject )
     {
         int numberOfEnemies = gameObject.transform.childCount - 1;
-        ShipHealth -= ( 2 + numberOfEnemies ) * 0.01f;
+        shipHealth -= ( 2 + numberOfEnemies ) * 0.01f;
         Multiplier = 1;
 
         GameObject.Destroy( gameObject );
