@@ -10,6 +10,7 @@ public class MenuUI : MonoBehaviour
 
 	private void Start () 
     {
+        Screen.showCursor = true;
         _title = Resources.Load<Texture>(@"Textures/title");
         _titleRect = new Rect(Screen.width / 2 - Screen.width * 0.75f / 2, 20, Screen.width * 0.75f, Screen.height * 0.3f);
         _startRect = new Rect(Screen.width / 2 - 200, Screen.height - 100, 400, 70);
