@@ -18,6 +18,7 @@ public class ProgressInfo : MonoBehaviour
     private Texture2D _dialBack;
     private Texture2D _arrowDown;
     private Texture2D _arrowUp;
+    private Texture2D _dial;
 
     // Locations of progress and health bars
     private Rect _progressRect;
@@ -42,6 +43,7 @@ public class ProgressInfo : MonoBehaviour
         _healthFore = new Texture2D(1, 1);
         _healthBack = new Texture2D(1, 1);
         _line = new Texture2D(1, 1);
+        _dial = new Texture2D(1, 1);
 
         // Sets texture colors
         _progressFore.SetPixel(0, 0, Color.green);
@@ -49,6 +51,7 @@ public class ProgressInfo : MonoBehaviour
         _healthFore.SetPixel(0, 0, Color.red);
         _healthBack.SetPixel(0, 0, Color.gray);
         _line.SetPixel(0, 0, Color.black);
+        _dial.SetPixel(0, 0, Color.white);
 
         // Applys colors to textures
         _progressFore.Apply();
@@ -56,6 +59,7 @@ public class ProgressInfo : MonoBehaviour
         _healthFore.Apply();
         _healthBack.Apply();
         _line.Apply();
+        _dial.Apply();
 
         _unitHeight = Screen.height / 25 * 0.5f;
         // Location of progress bar on screen
@@ -128,5 +132,19 @@ public class ProgressInfo : MonoBehaviour
         GUI.Label(new Rect(Screen.width * 0.25f * 2, _unitHeight + _unitHeight * 2.4f * 2, 400, 100), "Multiplier: " + GameController.Instance.Multiplier + "x");
         GUI.skin = current;
         GUI.color = currentColor;
+
+        // Calculate and draw dials
+        Vector2 headingDialOrigin = new Vector2(_headingRect.x + _headingRect.width / 2 - 4, _headingRect.y + _headingRect.height * 0.76f);
+        Vector2 velocityDialOrigin = new Vector2(_velocityRect.x + _velocityRect.width / 2 - 4, _velocityRect.y + _velocityRect.height * 0.76f);
+        float hDegree = GameController.Instance.Heading;
+        float vDegree = GameController.Instance.Velocity;
+        int headingX = (int)(100 * Mathf.Cos(Mathf.PI * hDegree));
+        int headingY = (int)(100 * Mathf.Sin(Mathf.PI * hDegree));
+        int velocityX = (int)(100 * Mathf.Cos(Mathf.PI * vDegree));
+        int velocityY = (int)(100 * Mathf.Sin(Mathf.PI * vDegree));
+        Vector2 headingEnd = new Vector2(headingDialOrigin.x - headingX, headingDialOrigin.y - headingY);
+        Vector2 velocityEnd = new Vector2(velocityDialOrigin.x - velocityX, velocityDialOrigin.y - velocityY);
+        GUITools.DrawLine(headingDialOrigin, headingEnd, _dial, 8);
+        GUITools.DrawLine(velocityDialOrigin, velocityEnd, _dial, 8);
     }
 }
