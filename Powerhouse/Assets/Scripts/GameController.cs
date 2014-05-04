@@ -105,7 +105,7 @@ public class GameController : MonoBehaviour
     private const int UNIT_OF_MOVEMENT_TIMEFRAME = 200;
 
     //the time, in milliseconds, between potential 1% progress gains
-    private const int UNIT_OF_PROGRESS_UPDATE_TIMEFRAME = 2;
+    private const int UNIT_OF_PROGRESS_UPDATE_TIMEFRAME = 100;
 
     //the time, in milliseconds, between potential 1% heading changes
     private const int UNIT_OF_HEADING_CHANGE = 1;
@@ -205,13 +205,14 @@ public class GameController : MonoBehaviour
      */
 	public void Update()
 	{
-        print("velo: " + Velocity);
+        print("heading: " + Heading);
         if ( ShipHealth <= 0f || Progress >= 1f ) GameOver = true;
         float dT = Time.deltaTime;
         float time = Time.time;
 
         //update the properties of the ship
 		UpdateShipVelocity( dT );
+        UpdateShipHeading( dT );
         UpdateGameProgress( dT );
 
         //we take a percent of damage for every few seconds that an enemy is in the storage room
