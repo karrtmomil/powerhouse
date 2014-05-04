@@ -56,6 +56,7 @@ public class RoomStatusUI : MonoBehaviour
         bool check = false;
         foreach (GameObject v in GameController.Instance.activeEnemies)
         {
+            if (v == null) continue;
             if (Vector3.Distance(this.transform.position, v.transform.position) < 0.5f)
             {
                 check = true;

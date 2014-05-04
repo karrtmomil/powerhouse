@@ -3,6 +3,9 @@ using System.Collections;
 
 public class Boat : MonoBehaviour {
 
+    //the velocity of the wooden boats
+    private const int FORWARD_MOVEMENT_SPEED = 5;
+
 	private const float CD = 2.75f;
 	private float timer;
 	private bool time;
@@ -22,7 +25,7 @@ public class Boat : MonoBehaviour {
 		{
 			float dtime = Time.deltaTime;
 			Vector3 forward = this.transform.forward;
-			transform.position += forward * 6 * dtime;
+			transform.position += forward * ( FORWARD_MOVEMENT_SPEED + (int)Mathf.Min( 10f, GameController.Instance.Multiplier / 5 ) ) * dtime;
 
 		}
 
