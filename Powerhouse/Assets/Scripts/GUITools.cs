@@ -250,4 +250,16 @@ public class GUITools
 
         GUI.matrix = matrixBackup;
     }
+
+    // Draws a rotated texture
+    public static void RotatedTexture(Rect location, Texture2D texture, float degrees)
+    {
+        Matrix4x4 matrixBackup = GUI.matrix;
+
+        float angle = degrees;
+        GUIUtility.RotateAroundPivot(angle, new Vector2(location.x + (location.width / 2), location.y + (location.height / 2)));
+        GUI.DrawTexture(location, texture, ScaleMode.StretchToFill);
+
+        GUI.matrix = matrixBackup;
+    }
 }

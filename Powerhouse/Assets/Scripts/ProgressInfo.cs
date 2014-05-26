@@ -37,6 +37,8 @@ public class ProgressInfo : MonoBehaviour
     private GameObject _turret2;
     private GameObject _turret3;
 
+    private Vector2 prevScreen;
+
     void Start()
     {
         // Get ahold of objects for end of game state
@@ -83,16 +85,36 @@ public class ProgressInfo : MonoBehaviour
         // Locations of heading and velocity dials
         _headingRect = new Rect(20, 20, Screen.width / 6, Screen.height / 6);
         _velocityRect = new Rect(Screen.width - (Screen.width / 6 + 20), 20, Screen.width / 6, Screen.height / 6);
+
+        prevScreen = new Vector2(Screen.width, Screen.height);
     }
 
     void Update()
     {
+        if (Input.GetKey(KeyCode.Escape))
+            Application.LoadLevel("Start");
+
         if (GameController.Instance.GameOver)
         {
             _main.SetActive(false);
             _turret1.SetActive(false);
             _turret1.SetActive(false);
             _turret1.SetActive(false);
+        }
+
+        if (prevScreen.x != Screen.width || prevScreen.y != Screen.height)
+        {
+            prevScreen = new Vector2(Screen.width, Screen.height);
+
+            _unitHeight = Screen.height / 25 * 0.5f;
+            // Location of progress bar on screen
+            _progressRect = new Rect(Screen.width * 0.25f, _unitHeight, Screen.width / 2, Screen.height / 25);
+            // Location of health bar on screen
+            _healthRect = new Rect(Screen.width * 0.25f, _unitHeight + _unitHeight * 2.4f, Screen.width / 2, Screen.height / 25);
+
+            // Locations of heading and velocity dials
+            _headingRect = new Rect(20, 20, Screen.width / 6, Screen.height / 6);
+            _velocityRect = new Rect(Screen.width - (Screen.width / 6 + 20), 20, Screen.width / 6, Screen.height / 6);
         }
     }
 
