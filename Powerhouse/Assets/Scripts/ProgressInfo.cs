@@ -154,9 +154,9 @@ public class ProgressInfo : MonoBehaviour
         Vector2 headingTextSize = GUI.skin.GetStyle("Label").CalcSize(new GUIContent("Heading"));
         Vector2 velocityTextSize = GUI.skin.GetStyle("Label").CalcSize(new GUIContent("Velocity"));
         Rect headingTextRect = new Rect(_headingRect.x + (_headingRect.width / 2 - headingTextSize.x / 2),
-            _headingRect.y + _headingRect.height - (headingTextSize.y + 2), headingTextSize.x, headingTextSize.y);
+            _headingRect.y + _headingRect.height - (headingTextSize.y + 6), headingTextSize.x, headingTextSize.y);
         Rect velocityTextRect = new Rect(_velocityRect.x + (_velocityRect.width / 2 - velocityTextSize.x / 2),
-            _velocityRect.y + _velocityRect.height - (velocityTextSize.y + 2), velocityTextSize.x, velocityTextSize.y);
+            _velocityRect.y + _velocityRect.height - (velocityTextSize.y + 6), velocityTextSize.x, velocityTextSize.y);
         GUI.Label(headingTextRect, "Heading");
         GUI.Label(velocityTextRect, "Velocity");
 
