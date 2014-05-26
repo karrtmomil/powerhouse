@@ -33,6 +33,7 @@ public class MenuUI : MonoBehaviour
 	}
 
     float _rotation = 0;
+    bool _play = true;
 
     private void OnGUI()
     {
@@ -55,6 +56,11 @@ public class MenuUI : MonoBehaviour
 
         if (textLocation.Contains(mousePos))
         {
+            if (_play)
+            {
+                _play = false;
+                audio.Play();
+            }
             GUI.color = Color.red;
             GUI.Label(textLocation, "Start Game");
             if (GUI.Button(textLocation, "", "Label"))
@@ -62,6 +68,7 @@ public class MenuUI : MonoBehaviour
         }
         else
         {
+            _play = true;
             GUI.Label(textLocation, "Start Game");
         }
 
